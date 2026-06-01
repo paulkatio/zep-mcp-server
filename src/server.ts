@@ -4,6 +4,7 @@ import { registerAttendanceTools } from './tools/attendances.js';
 import { registerAbsenceTools } from './tools/absences.js';
 import { registerDepartmentTools } from './tools/departments.js';
 import { registerDeviceTools } from './tools/devices.js';
+import { registerInsightTools } from './tools/insights.js';
 import { registerMasterDataResources } from './resources/master-data.js';
 
 const SERVER_NAME = 'zep-mcp-server';
@@ -22,6 +23,8 @@ export function createServer(): McpServer {
   registerAbsenceTools(server);
   registerDepartmentTools(server);
   registerDeviceTools(server);
+  // Synthetic, read-only aggregate tools (compose the GETs above; own no endpoint).
+  registerInsightTools(server);
   registerMasterDataResources(server);
 
   // Phase 3 — finance / projects / tickets / customers / stammdaten tools.
