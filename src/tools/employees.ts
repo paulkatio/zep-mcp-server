@@ -91,6 +91,8 @@ export function registerEmployeeTools(server: McpServer): void {
       description:
         'Nutze dies, um die Abwesenheiten (Urlaub, Krankheit) genau einer Person zu sehen — adressiert per username (String). ' +
         'Für alle Mitarbeiter zusammen nimm stattdessen zep_list_absences. Paginiert; auto_paginate möglich. ' +
+        'Hinweis: Dieses Tool hat KEINE Datumsfilter. Für datums-gefilterte Abwesenheiten eines Mitarbeiters nutze ' +
+        'zep_list_absences mit employee_id + start_date/end_date. ' +
         'Returns: Array von Abwesenheiten mit start_date, end_date, absence_reason_id, approved.',
       inputSchema: EmployeeSubListInput.shape,
       annotations: READ_ONLY,
