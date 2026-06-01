@@ -1,12 +1,12 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.SSIG-IT/zep-mcp-server",
+  "name": "io.github.paulkatio/zep-mcp-server",
   "title": "ZEP MCP Server",
   "description": "MCP-Server fuer ZEP HR & Zeiterfassung (Mitarbeiter, Zeiten, Abwesenheiten, Abteilungen)",
   "version": "0.1.0",
-  "websiteUrl": "https://github.com/SSIG-IT/zep-mcp-server",
+  "websiteUrl": "https://github.com/paulkatio/zep-mcp-server",
   "repository": {
-    "url": "https://github.com/SSIG-IT/zep-mcp-server",
+    "url": "https://github.com/paulkatio/zep-mcp-server",
     "source": "github"
   },
   "packages": [
