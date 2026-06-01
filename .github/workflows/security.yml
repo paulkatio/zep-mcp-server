@@ -31,7 +31,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci && npm run build
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Scan the built server's tool schemas
