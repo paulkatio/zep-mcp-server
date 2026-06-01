@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test (with coverage)
+        run: npx vitest run --coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Bundle-size check (dist/index.js must be < 500 KB)
+        run: |
+          size=$(stat -c%s dist/index.js)
+          echo "dist/index.js = $size bytes"
+          if [ "$size" -gt 512000 ]; then
+            echo "::error::dist/index.js is $size bytes (> 500 KB limit)"
+            exit 1
+          fi
+
+      - name: Upload coverage
+        if: matrix.node == 20
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          if-no-files-found: ignore

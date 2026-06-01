@@ -1,0 +1,44 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1' # weekly, Monday 06:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semgrep (TypeScript + security-audit rulesets)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/typescript p/security-audit
+
+  mcp-scan:
+    runs-on: ubuntu-latest
+    # mcp-scan is an optional, fast-moving security tool. Never let a tool error
+    # block a push — this job is advisory only.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci && npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Scan the built server's tool schemas
+        # Dummy env lets the server boot for schema inspection without real API calls.
+        env:
+          ZEP_API_TOKEN: dummy-token-for-scan
+          ZEP_TENANT: scan
+        run: |
+          pipx install mcp-scan || pip install mcp-scan || true
+          mcp-scan scan --server "node $(pwd)/dist/index.js" || true
