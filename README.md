@@ -1,6 +1,12 @@
 # ZEP MCP Server — HR & Zeiterfassung
 
-<!-- mcp-name: io.github.SSIG-IT/zep-mcp-server -->
+[![npm version](https://img.shields.io/npm/v/@ssig-it/zep-mcp-server.svg)](https://www.npmjs.com/package/@ssig-it/zep-mcp-server)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![CI](https://github.com/paulkatio/zep-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/paulkatio/zep-mcp-server/actions/workflows/ci.yml)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
+[![MCP](https://img.shields.io/badge/MCP-compatible-blue.svg)](https://modelcontextprotocol.io)
+
+<!-- mcp-name: io.github.paulkatio/zep-mcp-server -->
 
 > 🇬🇧 [English version](./README.en.md)
 
@@ -8,6 +14,31 @@ MCP-Server für die [ZEP](https://www.zep.de) REST-API (Ziel-Stand v7.8.74), fok
 **HR- und Zeiterfassungs-Workflows**: Mitarbeiter, Projektzeiten/Anwesenheiten, Abwesenheiten,
 Abteilungen und Terminals. Läuft per `npx` in jedem MCP-Client (Claude Desktop, Claude Code,
 Cursor, VS Code u.a.) über stdio.
+
+## Warum dieser Server
+
+Die ZEP-REST-API deckt das ganze Produkt ab (≈85 Endpunkte). Im Alltag mit einem LLM braucht
+man aber selten alles — sondern fokussierte, sichere Werkzeuge für **HR und Zeiterfassung**:
+Anwesenheit prüfen, Urlaub nachsehen, Mitarbeiter finden, Abteilungen auswerten. Genau das
+liefert dieser Server: 24 kuratierte Tools mit klaren When/How/What-Beschreibungen,
+Identifier-Sicherheit (Username vs. numerische ID), Audit-Log für Schreibzugriffe und sauberem
+Module-Gate-Verhalten für nicht lizenzierte Bereiche.
+
+## Inhalt
+
+- [Was dieser Server kann](#was-dieser-server-kann)
+- [Was dieser Server (noch) NICHT kann](#was-dieser-server-noch-nicht-kann)
+- [Voraussetzungen](#voraussetzungen)
+- [Installation & Konfiguration](#installation--konfiguration)
+- [Tool-Übersicht](#tool-übersicht)
+- [Identifier-Konventionen](#identifier-konventionen-️)
+- [Environment Variables](#environment-variables)
+- [Beispiele](#beispiele)
+- [Sicherheit](#sicherheit)
+- [Troubleshooting](#troubleshooting)
+- [Getestet mit](#getestet-mit)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
 
 ## Was dieser Server kann
 
@@ -163,6 +194,16 @@ claude mcp add zep --env ZEP_API_TOKEN=dein-bearer-token --env ZEP_TENANT=zepssi
 - **„Dieser Endpunkt ist für dein ZEP-Modul/Lizenz nicht aktiviert"** – Module-Gate: das Feature
   (z.B. internal-rates, oder die Stammdaten-Resources) ist für deinen Mandanten nicht freigeschaltet.
 - **Audit-Log** landet auf stderr (Marker `stream: "audit"`) bzw. unter `AUDIT_LOG_PATH`.
+
+## Getestet mit
+
+Verifiziert gegen **ZEP v7.8.74** mit dem `zepssigit`-Tenant: alle 18 Lese-Tools liefern echtes
+JSON (Discovery + Shape-Validierung in [`schemas/zep-inventory.json`](./schemas/zep-inventory.json)
+und [`inventory.md`](./inventory.md)). Body-Schemas stammen aus der ZEP-OpenAPI-v7.4.0-Spec und der
+Live-Doku. Unit-Tests mocken HTTP (undici MockAgent); Live-Integration-Tests laufen nur mit
+`ZEP_TEST_TOKEN` und nie in CI.
+
+<!-- screenshot:tba — Beispiel-Conversation mit Claude Desktop -->
 
 ## Roadmap
 
