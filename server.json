@@ -1,0 +1,62 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.SSIG-IT/zep-mcp-server",
+  "title": "ZEP MCP Server",
+  "description": "MCP-Server fuer die ZEP REST-API (Zeiterfassung, Projekte, Rechnungen)",
+  "version": "0.1.0",
+  "websiteUrl": "https://github.com/SSIG-IT/zep-mcp-server",
+  "repository": {
+    "url": "https://github.com/SSIG-IT/zep-mcp-server",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@ssig-it/zep-mcp-server",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "runtimeHint": "npx",
+      "environmentVariables": [
+        {
+          "name": "ZEP_API_TOKEN",
+          "description": "Bearer Token aus dem ZEP-Modul 'ZEP-Schnittstellen'",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "ZEP_TENANT",
+          "description": "Mandantenname (URL-Pfadsegment), z.B. 'ssig-it'",
+          "isRequired": true,
+          "isSecret": false
+        },
+        {
+          "name": "ZEP_BASE_URL",
+          "description": "Optionaler Override der ZEP-API-Base-URL",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "ZEP_CONCURRENCY_LIMIT",
+          "description": "Max. parallele Requests gegen ZEP (Default 5)",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "5"
+        },
+        {
+          "name": "LOG_LEVEL",
+          "description": "pino Log-Level fuer App-Logger",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "info"
+        },
+        {
+          "name": "AUDIT_LOG_PATH",
+          "description": "Optionaler File-Pfad fuer Audit-Logger",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

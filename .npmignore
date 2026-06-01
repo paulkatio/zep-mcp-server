@@ -1,0 +1,10 @@
+# Negate-style allowlist: ignore everything, then publish only the built
+# artifact and the package metadata. Source, schemas, tests and .env never ship.
+*
+!dist/
+!dist/**
+!server.json
+!README.md
+!README.en.md
+!LICENSE
+!package.json
