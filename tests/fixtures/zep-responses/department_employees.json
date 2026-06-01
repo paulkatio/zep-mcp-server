@@ -1,0 +1,174 @@
+{
+  "data": [
+    {
+      "username": "user9",
+      "firstname": "Max",
+      "lastname": "Mustermann",
+      "personal_number": "10000",
+      "street": "Musterstr. 1",
+      "zip": "12345",
+      "city": "Musterstadt",
+      "country": null,
+      "abbreviation": "MM",
+      "salutation": null,
+      "title": null,
+      "email": "redacted@example.com",
+      "phone": null,
+      "mobile": null,
+      "fax": null,
+      "private_phone": null,
+      "birthdate": null,
+      "iban": null,
+      "bic": null,
+      "account_no": null,
+      "bank_name": null,
+      "bank_code": null,
+      "currency": null,
+      "approval_date": null,
+      "vat": null,
+      "price_group": "01",
+      "employment": {
+        "id": 0,
+        "name": "Mitarbeiter/in"
+      },
+      "rights": {
+        "id": 0,
+        "name": "User"
+      },
+      "department_id": 1,
+      "language": null,
+      "personio_id": null,
+      "cost_bearer": null,
+      "tax_id": null,
+      "created": "2025-10-10T07:28:19.000000Z",
+      "modified": "2026-05-03T12:57:37.000000Z",
+      "creditor_number": null
+    },
+    {
+      "username": "user13",
+      "firstname": "Max",
+      "lastname": "Mustermann",
+      "personal_number": "10000",
+      "street": "Musterstr. 1",
+      "zip": "12345",
+      "city": "Musterstadt",
+      "country": null,
+      "abbreviation": "MM",
+      "salutation": {
+        "id": "Herr",
+        "name": "Herr"
+      },
+      "title": null,
+      "email": null,
+      "phone": null,
+      "mobile": null,
+      "fax": null,
+      "private_phone": null,
+      "birthdate": null,
+      "iban": null,
+      "bic": null,
+      "account_no": null,
+      "bank_name": null,
+      "bank_code": null,
+      "currency": null,
+      "approval_date": null,
+      "vat": null,
+      "price_group": "01",
+      "employment": {
+        "id": 0,
+        "name": "Mitarbeiter/in"
+      },
+      "rights": {
+        "id": 0,
+        "name": "User"
+      },
+      "department_id": 1,
+      "language": null,
+      "personio_id": null,
+      "cost_bearer": null,
+      "tax_id": null,
+      "created": "2025-01-07T12:07:51.000000Z",
+      "modified": "2026-04-30T11:14:01.000000Z",
+      "creditor_number": null
+    },
+    {
+      "username": "user14",
+      "firstname": "Erika",
+      "lastname": "Musterfrau",
+      "personal_number": "10000",
+      "street": "Musterstr. 1",
+      "zip": "12345",
+      "city": "Musterstadt",
+      "country": null,
+      "abbreviation": "MM",
+      "salutation": {
+        "id": "Frau",
+        "name": "Frau"
+      },
+      "title": null,
+      "email": null,
+      "phone": null,
+      "mobile": null,
+      "fax": null,
+      "private_phone": null,
+      "birthdate": null,
+      "iban": null,
+      "bic": null,
+      "account_no": null,
+      "bank_name": null,
+      "bank_code": null,
+      "currency": null,
+      "approval_date": null,
+      "vat": null,
+      "price_group": "01",
+      "employment": {
+        "id": 0,
+        "name": "Mitarbeiter/in"
+      },
+      "rights": {
+        "id": 0,
+        "name": "User"
+      },
+      "department_id": 1,
+      "language": null,
+      "personio_id": null,
+      "cost_bearer": null,
+      "tax_id": null,
+      "created": "2024-03-21T13:26:15.000000Z",
+      "modified": "2026-04-30T11:14:01.000000Z",
+      "creditor_number": null
+    }
+  ],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/employees?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/employees?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/employees?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/employees",
+    "per_page": 15,
+    "to": 3,
+    "total": 3
+  }
+}

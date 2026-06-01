@@ -38,6 +38,15 @@ const ConfigSchema = z
       emptyToUndefined,
       z.coerce.number().int().positive().default(5),
     ),
+    // Advanced/testing knobs (not in the public env table; sensible production defaults).
+    ZEP_RATE_LIMIT_COOLDOWN_MS: z.preprocess(
+      emptyToUndefined,
+      z.coerce.number().int().positive().default(60_000),
+    ),
+    ZEP_RETRY_BASE_MS: z.preprocess(
+      emptyToUndefined,
+      z.coerce.number().int().positive().default(1000),
+    ),
     LOG_LEVEL: z.preprocess(
       emptyToUndefined,
       z.enum(['trace', 'debug', 'info', 'warn', 'error']).default('info'),

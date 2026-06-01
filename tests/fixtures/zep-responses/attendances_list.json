@@ -1,0 +1,132 @@
+{
+  "data": [
+    {
+      "id": 97,
+      "date": "2023-07-31T00:00:00.000000Z",
+      "from": "12:38:00",
+      "to": "17:39:00",
+      "employee_id": "user5",
+      "duration": 5.0166666667,
+      "note": null,
+      "department_id": 3,
+      "created": "2023-07-31T15:39:38.000000Z",
+      "modified": "2023-10-19T13:48:23.000000Z"
+    },
+    {
+      "id": 99,
+      "date": "2023-08-01T00:00:00.000000Z",
+      "from": "09:40:00",
+      "to": "11:18:00",
+      "employee_id": "user6",
+      "duration": 1.6333333333,
+      "note": "",
+      "department_id": 2,
+      "created": "2023-08-01T09:18:16.000000Z",
+      "modified": "2023-08-01T09:18:16.000000Z"
+    },
+    {
+      "id": 102,
+      "date": "2023-08-01T00:00:00.000000Z",
+      "from": "08:18:00",
+      "to": "08:20:00",
+      "employee_id": "user6",
+      "duration": 0.0333333333,
+      "note": "",
+      "department_id": 2,
+      "created": "2023-08-01T09:43:23.000000Z",
+      "modified": "2023-08-01T09:43:23.000000Z"
+    }
+  ],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=3166",
+    "prev": null,
+    "next": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 3166,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=2",
+        "label": "2",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=3",
+        "label": "3",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=4",
+        "label": "4",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=5",
+        "label": "5",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=6",
+        "label": "6",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=7",
+        "label": "7",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=8",
+        "label": "8",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=9",
+        "label": "9",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=10",
+        "label": "10",
+        "active": false
+      },
+      {
+        "url": null,
+        "label": "...",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=3165",
+        "label": "3165",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=3166",
+        "label": "3166",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances?page=2",
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/attendances",
+    "per_page": 3,
+    "to": 3,
+    "total": 9498
+  }
+}

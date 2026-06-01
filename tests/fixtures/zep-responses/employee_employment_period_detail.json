@@ -1,0 +1,16 @@
+{
+  "data": {
+    "id": 14,
+    "employee_id": "max.mustermann",
+    "start_date": "2023-09-25T00:00:00.000000Z",
+    "end_date": "2025-10-31T00:00:00.000000Z",
+    "note": null,
+    "beginning_of_year": null,
+    "annual_leave_entitlement": 30,
+    "period_holiday_entitlement": 0,
+    "is_holiday_per_year": true,
+    "day_absent_in_hours": 0,
+    "created": "2023-09-25T06:24:51.000000Z",
+    "modified": "2025-10-29T15:17:19.000000Z"
+  }
+}

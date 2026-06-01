@@ -1,0 +1,179 @@
+{
+  "data": [
+    {
+      "id": 12,
+      "type": 2,
+      "status": 1,
+      "name": "SSIG john.doe",
+      "password": null,
+      "min_time": null,
+      "max_time": null,
+      "track": 1,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 13,
+      "type": 2,
+      "status": 1,
+      "name": "SSIG user.redacted",
+      "password": "",
+      "min_time": null,
+      "max_time": null,
+      "track": 0,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 14,
+      "type": 2,
+      "status": 1,
+      "name": "SSIG user6",
+      "password": null,
+      "min_time": null,
+      "max_time": null,
+      "track": 1,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 16,
+      "type": 0,
+      "status": 1,
+      "name": "SSIG user8",
+      "password": "",
+      "min_time": null,
+      "max_time": null,
+      "track": 0,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 19,
+      "type": 2,
+      "status": 1,
+      "name": "SSIG user12",
+      "password": null,
+      "min_time": null,
+      "max_time": null,
+      "track": 1,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 22,
+      "type": 2,
+      "status": 1,
+      "name": "SSIG user10",
+      "password": null,
+      "min_time": null,
+      "max_time": null,
+      "track": 0,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 24,
+      "type": 0,
+      "status": 1,
+      "name": "SSIG s.popper",
+      "password": "",
+      "min_time": null,
+      "max_time": null,
+      "track": 0,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 26,
+      "type": 0,
+      "status": 1,
+      "name": "SSIG All",
+      "password": "",
+      "min_time": null,
+      "max_time": null,
+      "track": 0,
+      "display_config": null,
+      "employees_count": 0,
+      "categories_count": 0
+    },
+    {
+      "id": 30,
+      "type": 2,
+      "status": 1,
+      "name": "App John Doe",
+      "password": null,
+      "min_time": null,
+      "max_time": null,
+      "track": 1,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 31,
+      "type": 0,
+      "status": 1,
+      "name": "Max Mustermann",
+      "password": null,
+      "min_time": null,
+      "max_time": null,
+      "track": 1,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    },
+    {
+      "id": 32,
+      "type": 2,
+      "status": 0,
+      "name": "App Max Mustermann",
+      "password": null,
+      "min_time": null,
+      "max_time": null,
+      "track": 1,
+      "display_config": null,
+      "employees_count": 1,
+      "categories_count": 0
+    }
+  ],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/devices?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/devices?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/devices?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/devices",
+    "per_page": 15,
+    "to": 11,
+    "total": 11
+  }
+}

@@ -19,4 +19,9 @@ export default tseslint.config(
       sourceType: 'module',
     },
   },
+  {
+    // Node dev/ops scripts (ESM .mjs): Node globals are implicit, not declared.
+    files: ['scripts/**/*.{js,mjs,cjs}'],
+    rules: { 'no-undef': 'off' },
+  },
 );

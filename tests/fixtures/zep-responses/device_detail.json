@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": 12,
+    "type": 2,
+    "status": 1,
+    "name": "SSIG john.doe",
+    "password": null,
+    "min_time": null,
+    "max_time": null,
+    "track": 1,
+    "display_config": null,
+    "employees": [
+      {
+        "employee_id": "john.doe"
+      }
+    ],
+    "categories": []
+  }
+}

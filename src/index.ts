@@ -1,11 +1,26 @@
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { createServer } from './server.js';
 import { config } from './config.js';
+import { logger } from './lib/logger.js';
 
-// Phase 1 stub: validate config on load, log to stderr, exit cleanly.
-// No MCP server, tools, resources or HTTP client yet (added in later phases).
-process.stderr.write('ZEP MCP Server starting... (Phase 1 stub)\n');
-process.stderr.write(
-  `[zep-mcp-server] Config loaded for tenant "${config.ZEP_TENANT}". ` +
-    `Phase 1 stub — no tools registered yet.\n`,
-);
+async function main(): Promise<void> {
+  const server = createServer();
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
 
-process.exit(0);
+  logger.info({ tenant: config.ZEP_TENANT, baseUrl: config.ZEP_BASE_URL }, 'zep_mcp_started');
+  // stdout is reserved for the JSON-RPC stream; status goes to stderr.
+  process.stderr.write('ZEP MCP Server running on stdio.\n');
+
+  const shutdown = (signal: string): void => {
+    logger.info({ signal }, 'zep_mcp_shutdown');
+    void server.close().finally(() => process.exit(0));
+  };
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+}
+
+main().catch((err: unknown) => {
+  process.stderr.write(`Fatal: ${err instanceof Error ? err.message : String(err)}\n`);
+  process.exit(1);
+});

@@ -1,0 +1,56 @@
+{
+  "data": [
+    {
+      "id": 2,
+      "parent_id": 1,
+      "name": "Vertrieb",
+      "description": "Vertrieb",
+      "comments": null,
+      "status": null,
+      "created": "2023-06-14T07:21:02.000000Z",
+      "modified": "2023-06-14T07:22:07.000000Z"
+    },
+    {
+      "id": 3,
+      "parent_id": 1,
+      "name": "Technik",
+      "description": "Technik",
+      "comments": null,
+      "status": null,
+      "created": "2023-06-14T07:21:30.000000Z",
+      "modified": "2023-06-14T13:22:56.000000Z"
+    }
+  ],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/children?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/children?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/children?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/departments/1/children",
+    "per_page": 15,
+    "to": 2,
+    "total": 2
+  }
+}

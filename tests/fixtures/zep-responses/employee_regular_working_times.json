@@ -1,0 +1,74 @@
+{
+  "data": [
+    {
+      "id": 12,
+      "employee_id": "max.mustermann",
+      "start_date": null,
+      "monday": 8,
+      "monday_workday": true,
+      "tuesday": 8,
+      "tuesday_workday": true,
+      "wednesday": 8,
+      "wednesday_workday": true,
+      "thursday": 8,
+      "thursday_workday": true,
+      "friday": 8,
+      "friday_workday": true,
+      "saturday": null,
+      "saturday_workday": null,
+      "sunday": null,
+      "sunday_workday": null,
+      "is_monthly": null,
+      "monthly_hours": null,
+      "max_hours_in_month": null,
+      "max_hours_in_week": null,
+      "holidayCalendar": {
+        "id": 1,
+        "name": "Standard",
+        "note": "",
+        "country": "Deutschland",
+        "region": "Baden-Württemberg",
+        "created": "2018-07-31T07:43:46.000000Z",
+        "modified": "2023-06-14T06:42:20.000000Z"
+      },
+      "breakRegulationType": {
+        "id": 1,
+        "name": "Standard",
+        "created": "2021-03-16T07:27:53.000000Z",
+        "modified": "2015-04-17T10:37:01.000000Z"
+      }
+    }
+  ],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/regular-working-times?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/regular-working-times?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/regular-working-times?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/regular-working-times",
+    "per_page": 15,
+    "to": 1,
+    "total": 1
+  }
+}

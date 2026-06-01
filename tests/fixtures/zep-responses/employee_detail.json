@@ -1,0 +1,52 @@
+{
+  "data": {
+    "username": "max.mustermann",
+    "firstname": "Max",
+    "lastname": "Mustermann",
+    "personal_number": "10000",
+    "street": "Musterstr. 1",
+    "zip": "12345",
+    "city": "Musterstadt",
+    "country": null,
+    "abbreviation": "MM",
+    "salutation": {
+      "id": "Herr",
+      "name": "Herr"
+    },
+    "title": null,
+    "email": "redacted@example.com",
+    "phone": null,
+    "mobile": null,
+    "fax": null,
+    "private_phone": null,
+    "birthdate": null,
+    "iban": null,
+    "bic": null,
+    "account_no": null,
+    "bank_name": null,
+    "bank_code": null,
+    "currency": null,
+    "approval_date": null,
+    "vat": null,
+    "price_group": "01",
+    "employment": {
+      "id": 0,
+      "name": "Mitarbeiter/in"
+    },
+    "rights": {
+      "id": 0,
+      "name": "User"
+    },
+    "department_id": 3,
+    "language": null,
+    "personio_id": null,
+    "cost_bearer": null,
+    "tax_id": null,
+    "created": "2023-09-25T06:24:51.000000Z",
+    "modified": "2026-04-30T11:14:01.000000Z",
+    "creditor_number": null,
+    "categories": [],
+    "dynamicAttributes": [],
+    "absences_count": 68
+  }
+}

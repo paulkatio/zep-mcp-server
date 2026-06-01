@@ -1,0 +1,72 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "parent_id": null,
+      "name": "Standard",
+      "description": "SSIG-IT",
+      "comments": "SSIG-IT",
+      "status": null,
+      "manager_count": 1,
+      "children_count": 2,
+      "created": null,
+      "modified": "2023-06-14T14:29:55.000000Z"
+    },
+    {
+      "id": 2,
+      "parent_id": 1,
+      "name": "Vertrieb",
+      "description": "Vertrieb",
+      "comments": null,
+      "status": null,
+      "manager_count": 0,
+      "children_count": 0,
+      "created": "2023-06-14T07:21:02.000000Z",
+      "modified": "2023-06-14T07:22:07.000000Z"
+    },
+    {
+      "id": 3,
+      "parent_id": 1,
+      "name": "Technik",
+      "description": "Technik",
+      "comments": null,
+      "status": null,
+      "manager_count": 1,
+      "children_count": 0,
+      "created": "2023-06-14T07:21:30.000000Z",
+      "modified": "2023-06-14T13:22:56.000000Z"
+    }
+  ],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/departments?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/departments?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/departments?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/departments",
+    "per_page": 15,
+    "to": 3,
+    "total": 3
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "data": [
+    {
+      "id": 21,
+      "employee_id": "user6",
+      "type": 0,
+      "start_date": "2023-08-09T00:00:00.000000Z",
+      "end_date": "2023-08-09T00:00:00.000000Z",
+      "hours": null,
+      "from": null,
+      "to": null,
+      "note": null,
+      "approved": true,
+      "timezone": "Europe/Berlin",
+      "created": null,
+      "modified": null,
+      "absence_reason_id": "KR",
+      "absenceReason": {
+        "name": "KR",
+        "comment": "Krank mit Lohnfortzahlung|en:Sick with continued pay|fr:Krank mit Lohnfortzahlung|es:Krank mit Lohnfortzahlung",
+        "approve": 1,
+        "allow_self_entry": 1,
+        "allow_half_day_holiday": 1,
+        "allow_hours_of_vacation": 1,
+        "anyone_can_see_name": null,
+        "color": "#91300E",
+        "type": {
+          "id": 1,
+          "name": "paid absence"
+        },
+        "client_calendar_category": null,
+        "inform_employee_upon_approval_or_revocation": 1,
+        "created": null,
+        "modified": null
+      },
+      "leaveApprovalApplication": {
+        "id": 15,
+        "employee_id": "user6",
+        "requested_at": "2023-08-09 09:32:06",
+        "number_of_days": "1.0000000000",
+        "start_date": "2023-08-09",
+        "end_date": "2023-08-09",
+        "note": "",
+        "status": {
+          "id": 1,
+          "name": "genehmigt"
+        },
+        "recipient": "redacted@example.com",
+        "recipient_cc": null,
+        "recipient_bcc": null,
+        "status_edited_since": "2023-08-14 12:39:45",
+        "status_edited_by": "user8",
+        "status_note": "",
+        "absence_text": ""
+      }
+    },
+    {
+      "id": 22,
+      "employee_id": "user6",
+      "type": 1,
+      "start_date": "2023-09-22T00:00:00.000000Z",
+      "end_date": "2023-09-22T00:00:00.000000Z",
+      "hours": null,
+      "from": null,
+      "to": null,
+      "note": "",
+      "approved": true,
+      "timezone": "Europe/Berlin",
+      "created": null,
+      "modified": null,
+      "absence_reason_id": "UB",
+      "absenceReason": {
+        "name": "UB",
+        "comment": "Urlaub bezahlt|en:Paid leave|fr:Urlaub bezahlt|es:Urlaub bezahlt",
+        "approve": 1,
+        "allow_self_entry": 1,
+        "allow_half_day_holiday": 1,
+        "allow_hours_of_vacation": 1,
+        "anyone_can_see_name": null,
+        "color": "#FF8800",
+        "type": {
+          "id": 0,
+          "name": "annual holiday"
+        },
+        "client_calendar_category": null,
+        "inform_employee_upon_approval_or_revocation": 1,
+        "created": null,
+        "modified": null
+      },
+      "leaveApprovalApplication": {
+        "id": 16,
+        "employee_id": "user6",
+        "requested_at": "2023-08-16 11:34:55",
+        "number_of_days": "0.5000000000",
+        "start_date": "2023-09-22",
+        "end_date": "2023-09-22",
+        "note": "",
+        "status": {
+          "id": 1,
+          "name": "genehmigt"
+        },
+        "recipient": "redacted@example.com",
+        "recipient_cc": null,
+        "recipient_bcc": null,
+        "status_edited_since": "2023-08-16 12:00:42",
+        "status_edited_by": "user16",
+        "status_note": "",
+        "absence_text": ""
+      }
+    },
+    {
+      "id": 23,
+      "employee_id": "erika.musterfrau",
+      "type": 0,
+      "start_date": "2023-08-22T00:00:00.000000Z",
+      "end_date": "2023-08-22T00:00:00.000000Z",
+      "hours": null,
+      "from": null,
+      "to": null,
+      "note": "",
+      "approved": true,
+      "timezone": "Europe/Berlin",
+      "created": null,
+      "modified": null,
+      "absence_reason_id": "UB",
+      "absenceReason": {
+        "name": "UB",
+        "comment": "Urlaub bezahlt|en:Paid leave|fr:Urlaub bezahlt|es:Urlaub bezahlt",
+        "approve": 1,
+        "allow_self_entry": 1,
+        "allow_half_day_holiday": 1,
+        "allow_hours_of_vacation": 1,
+        "anyone_can_see_name": null,
+        "color": "#FF8800",
+        "type": {
+          "id": 0,
+          "name": "annual holiday"
+        },
+        "client_calendar_category": null,
+        "inform_employee_upon_approval_or_revocation": 1,
+        "created": null,
+        "modified": null
+      },
+      "leaveApprovalApplication": null
+    }
+  ],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=197",
+    "prev": null,
+    "next": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 197,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=2",
+        "label": "2",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=3",
+        "label": "3",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=4",
+        "label": "4",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=5",
+        "label": "5",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=6",
+        "label": "6",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=7",
+        "label": "7",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=8",
+        "label": "8",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=9",
+        "label": "9",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=10",
+        "label": "10",
+        "active": false
+      },
+      {
+        "url": null,
+        "label": "...",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=196",
+        "label": "196",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=197",
+        "label": "197",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/absences?page=2",
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/absences",
+    "per_page": 3,
+    "to": 3,
+    "total": 589
+  }
+}

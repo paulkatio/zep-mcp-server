@@ -1,0 +1,35 @@
+{
+  "data": [],
+  "links": {
+    "first": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/transponders?page=1",
+    "last": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/transponders?page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": null,
+    "last_page": 1,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/transponders?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": null,
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "https://user.redacted-user.redacted/tenant/next/api/v1/employees/max.mustermann/transponders",
+    "per_page": 15,
+    "to": null,
+    "total": 0
+  }
+}

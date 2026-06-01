@@ -1,0 +1,56 @@
+{
+  "data": {
+    "id": 21,
+    "employee_id": "user6",
+    "type": 0,
+    "start_date": "2023-08-09T00:00:00.000000Z",
+    "end_date": "2023-08-09T00:00:00.000000Z",
+    "hours": null,
+    "from": null,
+    "to": null,
+    "note": null,
+    "approved": true,
+    "timezone": "Europe/Berlin",
+    "created": null,
+    "modified": null,
+    "absence_reason_id": "KR",
+    "absenceReason": {
+      "name": "KR",
+      "comment": "Krank mit Lohnfortzahlung|en:Sick with continued pay|fr:Krank mit Lohnfortzahlung|es:Krank mit Lohnfortzahlung",
+      "approve": 1,
+      "allow_self_entry": 1,
+      "allow_half_day_holiday": 1,
+      "allow_hours_of_vacation": 1,
+      "anyone_can_see_name": null,
+      "color": "#91300E",
+      "type": {
+        "id": 1,
+        "name": "paid absence"
+      },
+      "client_calendar_category": null,
+      "inform_employee_upon_approval_or_revocation": 1,
+      "created": null,
+      "modified": null
+    },
+    "leaveApprovalApplication": {
+      "id": 15,
+      "employee_id": "user6",
+      "requested_at": "2023-08-09 09:32:06",
+      "number_of_days": "1.0000000000",
+      "start_date": "2023-08-09",
+      "end_date": "2023-08-09",
+      "note": "",
+      "status": {
+        "id": 1,
+        "name": "genehmigt"
+      },
+      "recipient": "redacted@example.com",
+      "recipient_cc": null,
+      "recipient_bcc": null,
+      "status_edited_since": "2023-08-14 12:39:45",
+      "status_edited_by": "user8",
+      "status_note": "",
+      "absence_text": ""
+    }
+  }
+}

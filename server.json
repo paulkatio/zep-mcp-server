@@ -26,7 +26,7 @@
         },
         {
           "name": "ZEP_TENANT",
-          "description": "Mandantenname (URL-Pfadsegment), z.B. 'ssig-it'",
+          "description": "Mandantenname (URL-Pfadsegment), z.B. 'zepssigit'",
           "isRequired": true,
           "isSecret": false
         },
