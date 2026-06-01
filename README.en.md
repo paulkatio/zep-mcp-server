@@ -122,13 +122,27 @@ claude mcp add zep \
 
 ## Distribution & Hosting
 
-This server is **not on npm**. It runs self-hosted via Git clone. Recommended setups:
+This server is **not on npm**. It runs self-hosted via Git — directly via `npx` from GitHub, or
+cloned/built locally. Recommended setups:
 
-- **Local** in Claude Desktop / Cursor / Claude Code (see above).
-- **Self-hosted MCPHub** (a MetaMCP instance, e.g. `mcp.ssig-it.com`) — central for multiple clients.
-  Step by step: **[docs/DEPLOY-MCPHUB.md](./docs/DEPLOY-MCPHUB.md)**.
+- **npx from GitHub** (no manual clone) — builds itself on install (`prepare` script).
+  Claude Desktop config:
+  ```json
+  {
+    "mcpServers": {
+      "zep": {
+        "command": "npx",
+        "args": ["-y", "github:paulkatio/zep-mcp-server"],
+        "env": { "ZEP_API_TOKEN": "your-bearer-token", "ZEP_TENANT": "zepssigit" }
+      }
+    }
+  }
+  ```
+- **Cloned locally** in Claude Desktop / Cursor / Claude Code (see [Installation](#installation--configuration)).
+- **Self-hosted MCPHub** (a MetaMCP instance, e.g. `mcp.ssig-it.com`) — central for multiple clients:
+  **[docs/DEPLOY-MCPHUB.md](./docs/DEPLOY-MCPHUB.md)**.
 
-Updates: `git pull && npm ci && npm run build`, then restart the server in the client/hub.
+Updates (local clone): `git pull && npm ci && npm run build`, then restart the server in the client/hub.
 
 ## Tool overview
 
