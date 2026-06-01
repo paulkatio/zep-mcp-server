@@ -1,0 +1,154 @@
+{
+  "probed_at": "2026-06-01",
+  "method": "live probe with non-existent id 999999 — no real record is ever touched",
+  "conclusion": "No write/destructive endpoints are available on this tenant. /attendances/{id} and /absences/{id} are GET,HEAD only (405 on PATCH/PUT/DELETE); /absences/{id}/approve|reject|approval routes do not exist (404 route-not-found). => Phase 8 adds NO update/delete/approve tools; only read-only aggregate tools.",
+  "tenant": "zepssigit",
+  "base_url": "https://www.zep-online.de/zepssigit/next/api/v1",
+  "dummy_id": 999999,
+  "results": [
+    {
+      "tool": "zep_update_attendance",
+      "method": "PATCH",
+      "path": "/attendances/999999",
+      "body": {},
+      "status": 405,
+      "marker": "METHOD_NA",
+      "message": "The PATCH method is not supported for route zepssigit/next/api/v1/attendances/999999. Supported methods: GET, HEAD.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_update_attendance(PUT)",
+      "method": "PUT",
+      "path": "/attendances/999999",
+      "body": {},
+      "status": 405,
+      "marker": "METHOD_NA",
+      "message": "The PUT method is not supported for route zepssigit/next/api/v1/attendances/999999. Supported methods: GET, HEAD.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_delete_attendance",
+      "method": "DELETE",
+      "path": "/attendances/999999",
+      "status": 405,
+      "marker": "METHOD_NA",
+      "message": "The DELETE method is not supported for route zepssigit/next/api/v1/attendances/999999. Supported methods: GET, HEAD.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_update_absence",
+      "method": "PATCH",
+      "path": "/absences/999999",
+      "body": {},
+      "status": 405,
+      "marker": "METHOD_NA",
+      "message": "The PATCH method is not supported for route zepssigit/next/api/v1/absences/999999. Supported methods: GET, HEAD.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_update_absence(PUT)",
+      "method": "PUT",
+      "path": "/absences/999999",
+      "body": {},
+      "status": 405,
+      "marker": "METHOD_NA",
+      "message": "The PUT method is not supported for route zepssigit/next/api/v1/absences/999999. Supported methods: GET, HEAD.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_delete_absence",
+      "method": "DELETE",
+      "path": "/absences/999999",
+      "status": 405,
+      "marker": "METHOD_NA",
+      "message": "The DELETE method is not supported for route zepssigit/next/api/v1/absences/999999. Supported methods: GET, HEAD.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_approve_absence",
+      "method": "POST",
+      "path": "/absences/999999/approve",
+      "body": {},
+      "status": 404,
+      "marker": "MODULE_GATE",
+      "message": "The route zepssigit/next/api/v1/absences/999999/approve could not be found.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_reject_absence",
+      "method": "POST",
+      "path": "/absences/999999/reject",
+      "body": {},
+      "status": 404,
+      "marker": "MODULE_GATE",
+      "message": "The route zepssigit/next/api/v1/absences/999999/reject could not be found.",
+      "contentType": "application/json"
+    },
+    {
+      "tool": "zep_approve_absence(approval)",
+      "method": "POST",
+      "path": "/absences/999999/approval",
+      "body": {},
+      "status": 404,
+      "marker": "MODULE_GATE",
+      "message": "The route zepssigit/next/api/v1/absences/999999/approval could not be found.",
+      "contentType": "application/json"
+    }
+  ],
+  "verdict": [
+    {
+      "method": "PATCH",
+      "path": "/attendances/999999",
+      "marker": "METHOD_NA",
+      "exists": false
+    },
+    {
+      "method": "PUT",
+      "path": "/attendances/999999",
+      "marker": "METHOD_NA",
+      "exists": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/attendances/999999",
+      "marker": "METHOD_NA",
+      "exists": false
+    },
+    {
+      "method": "PATCH",
+      "path": "/absences/999999",
+      "marker": "METHOD_NA",
+      "exists": false
+    },
+    {
+      "method": "PUT",
+      "path": "/absences/999999",
+      "marker": "METHOD_NA",
+      "exists": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/absences/999999",
+      "marker": "METHOD_NA",
+      "exists": false
+    },
+    {
+      "method": "POST",
+      "path": "/absences/999999/approve",
+      "marker": "MODULE_GATE",
+      "exists": false
+    },
+    {
+      "method": "POST",
+      "path": "/absences/999999/reject",
+      "marker": "MODULE_GATE",
+      "exists": false
+    },
+    {
+      "method": "POST",
+      "path": "/absences/999999/approval",
+      "marker": "MODULE_GATE",
+      "exists": false
+    }
+  ]
+}

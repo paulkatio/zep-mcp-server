@@ -121,3 +121,23 @@
 | NOT_FOUND | 404 | `zep_list_folder_documents` | `/folders/1/documents?limit=1` | json 404 "The route zepssigit/next/api/v1/folders/1/documents could not be found." (route NOT registered (endpoint unavailable for this tenant/module)) |
 | OK_JSON | 200 | `zep_list_devices` | `/devices?limit=1` | data=array(11) links meta total=11 |
 | OK_JSON | 200 | `zep_get_device` | `/devices/12` | data=object |
+
+## Write/destructive endpoints (Phase 8.2.1 probe)
+
+Probed 2026-06-01 with a non-existent id (`999999`) so the API reveals whether the
+*route* is registered without touching a real record. Full result:
+[`schemas/zep-inventory-write-ops.json`](./schemas/zep-inventory-write-ops.json).
+
+| Marker | Status | Method | Path | Note |
+| --- | --- | --- | --- | --- |
+| METHOD_NA | 405 | PATCH/PUT/DELETE | `/attendances/{id}` | route is **GET, HEAD only** — no update/delete |
+| METHOD_NA | 405 | PATCH/PUT/DELETE | `/absences/{id}` | route is **GET, HEAD only** — no update/delete |
+| MODULE_GATE | 404 | POST | `/absences/{id}/approve` | route not registered |
+| MODULE_GATE | 404 | POST | `/absences/{id}/reject` | route not registered |
+| MODULE_GATE | 404 | POST | `/absences/{id}/approval` | route not registered |
+
+**Conclusion:** this tenant exposes **no** write/destructive endpoints for attendances or
+absences beyond the two existing `POST` collection creates (`POST /attendances`, `POST /absences`).
+Phase 8 therefore adds **no** update/delete/approve tools — only read-only **aggregate** tools
+(`zep_get_team_status_today`, `zep_get_employee_attendance_summary`,
+`zep_get_employee_vacation_balance`, `zep_list_pending_absences`) that compose existing GETs.
