@@ -26,8 +26,8 @@ beforeEach(() => {
 });
 
 describe('registry', () => {
-  it('registers 17 employee tools', () => {
-    expect(tools.size).toBe(17);
+  it('registers 12 employee tools (module-gated subs trimmed)', () => {
+    expect(tools.size).toBe(12);
   });
 });
 
@@ -74,20 +74,29 @@ describe('input validation (strict)', () => {
   it('EmployeeSubListInput rejects unknown keys', () => {
     expect(EmployeeSubListInput.safeParse({ username: 'x', foo: 1 }).success).toBe(false);
   });
-  it('CreateEmployeeInput requires username/firstname/lastname', () => {
-    expect(CreateEmployeeInput.safeParse({ username: 'x' }).success).toBe(false);
-    expect(CreateEmployeeInput.safeParse({ username: 'x', firstname: 'A', lastname: 'B' }).success).toBe(true);
+  it('CreateEmployeeInput enforces all required fields (incl. username >= 5, email, password, price_group)', () => {
+    expect(CreateEmployeeInput.safeParse({ username: 'max.x', firstname: 'A', lastname: 'B' }).success).toBe(false);
+    expect(
+      CreateEmployeeInput.safeParse({
+        username: 'max.x',
+        firstname: 'A',
+        lastname: 'B',
+        email: 'a@b.de',
+        password: 'secret12',
+        price_group: '01',
+      }).success,
+    ).toBe(true);
   });
 });
 
 describe('zep_list_employees', () => {
-  it('forwards limit/page/filter as query', async () => {
+  it('forwards limit/page + personal_number filter as query', async () => {
     mockReq.mockResolvedValueOnce(fixture('employees_list'));
-    await call('zep_list_employees', { limit: 3, page: 1, department_id: 3 });
+    await call('zep_list_employees', { limit: 3, page: 1, personal_number: ['10000'] });
     expect(mockReq).toHaveBeenCalledWith({
       method: 'GET',
       path: '/employees',
-      query: { limit: 3, page: 1, department_id: 3 },
+      query: { limit: 3, page: 1, personal_number: ['10000'] },
     });
   });
 

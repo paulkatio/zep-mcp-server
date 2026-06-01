@@ -104,11 +104,22 @@ describe('input validation (strict)', () => {
   it('GetAttendanceInput requires id', () => {
     expect(GetAttendanceInput.safeParse({}).success).toBe(false);
   });
-  it('CreateAttendanceInput requires employee_id/date/from/to', () => {
-    expect(CreateAttendanceInput.safeParse({ employee_id: 'jane.roe' }).success).toBe(false);
+  it('CreateAttendanceInput requires employee_id/date/from/to + project_id/project_task_id/activity_id', () => {
+    // project_* are required by ZEP (needs Projektverwaltung module).
     expect(
       CreateAttendanceInput.safeParse({ employee_id: 'jane.roe', date: '2023-07-31', from: '12:38', to: '17:39' })
         .success,
+    ).toBe(false);
+    expect(
+      CreateAttendanceInput.safeParse({
+        employee_id: 'jane.roe',
+        date: '2023-07-31',
+        from: '12:38',
+        to: '17:39',
+        project_id: 1,
+        project_task_id: 1,
+        activity_id: 'A1',
+      }).success,
     ).toBe(true);
   });
 });

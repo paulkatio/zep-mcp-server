@@ -67,14 +67,14 @@ describe('input validation (strict)', () => {
   it('ListAbsencesInput rejects unknown keys', () => {
     expect(ListAbsencesInput.safeParse({ foo: 1 }).success).toBe(false);
   });
-  it('CreateAbsenceInput requires employee_id/absence_reason_id/start_date/end_date', () => {
+  it('CreateAbsenceInput requires employee_id/absence_reason_id/from/to (dates)', () => {
     expect(CreateAbsenceInput.safeParse({ employee_id: 'user4' }).success).toBe(false);
     expect(
       CreateAbsenceInput.safeParse({
         employee_id: 'user4',
         absence_reason_id: 'KR',
-        start_date: '2023-08-09',
-        end_date: '2023-08-09',
+        from: '2023-08-09',
+        to: '2023-08-09',
       }).success,
     ).toBe(true);
   });
@@ -103,8 +103,8 @@ describe('zep_create_absence', () => {
     const body = {
       employee_id: 'user4',
       absence_reason_id: 'KR',
-      start_date: '2023-08-09',
-      end_date: '2023-08-09',
+      from: '2023-08-09',
+      to: '2023-08-09',
     };
     mockReq.mockResolvedValueOnce(fixture('absence_detail'));
     const res = await call('zep_create_absence', body);

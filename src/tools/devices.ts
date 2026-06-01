@@ -18,9 +18,9 @@ export function registerDeviceTools(server: McpServer): void {
     {
       title: 'Terminals auflisten',
       description:
-        'Listet ZEP-Terminals (Erfassungs-/Stempel-Geräte). Paginiert mit limit/page; ' +
+        'Nutze dies, um die Erfassungs-/Stempel-Terminals zu sehen. Keine Filter; ' +
         'auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
-        'Returns: Array mit id, type, status, name, track, employees_count, categories_count.',
+        'Returns: Array mit id, type, status, name, track, employees, categories.',
       inputSchema: ListDevicesInput.shape,
       annotations: READ_ONLY,
     },

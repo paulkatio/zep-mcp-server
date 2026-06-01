@@ -6,13 +6,7 @@ import { runList, runGet } from '../lib/toolHelpers.js';
 import { toolOk, toolError } from '../lib/toolResult.js';
 import { auditWrite } from '../lib/audit.js';
 import { PaginationInput, AutoPaginateInput } from '../schemas/common.js';
-import {
-  EmployeeUsername,
-  EmploymentPeriodId,
-  InternalRateId,
-  RegularWorkingTimeId,
-  MealId,
-} from '../schemas/identifiers.js';
+import { EmployeeUsername, EmploymentPeriodId, RegularWorkingTimeId } from '../schemas/identifiers.js';
 import {
   CreateEmployeeBody,
   UpdateEmployeeBody,
@@ -28,7 +22,10 @@ const u = (username: string): string => encodeURIComponent(username);
 export const ListEmployeesInput = z
   .object({
     ...list,
-    department_id: z.number().int().positive().optional().describe('Filter nach Abteilungs-ID. [VERIFY gegen Live-Doku]'),
+    personal_number: z
+      .array(z.string())
+      .optional()
+      .describe('Filter nach einer oder mehreren Personalnummern (serialisiert als personal_number[]=).'),
   })
   .strict();
 export const GetEmployeeInput = z.object({ username: EmployeeUsername }).strict();
@@ -36,16 +33,12 @@ export const EmployeeSubListInput = z.object({ username: EmployeeUsername, ...li
 export const GetEmploymentPeriodInput = z
   .object({ username: EmployeeUsername, employment_period_id: EmploymentPeriodId })
   .strict();
-export const GetInternalRateInput = z
-  .object({ username: EmployeeUsername, internal_rate_id: InternalRateId })
-  .strict();
 export const GetRegularWorkingTimeInput = z
   .object({ username: EmployeeUsername, regular_working_time_id: RegularWorkingTimeId })
   .strict();
-export const GetMealInput = z.object({ username: EmployeeUsername, meal_id: MealId }).strict();
 export const CreateEmployeeInput = CreateEmployeeBody;
 export const UpdateEmployeeInput = z
-  .object({ username: EmployeeUsername, ...UpdateEmployeeBody.omit({ username: true }).shape })
+  .object({ username: EmployeeUsername, ...UpdateEmployeeBody.shape })
   .strict();
 export const CreateEmploymentPeriodInput = z
   .object({ username: EmployeeUsername, ...CreateEmploymentPeriodBody.shape })
@@ -65,9 +58,10 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Mitarbeiter auflisten',
       description:
-        'Listet ZEP-Mitarbeiter. Optionaler Filter department_id (numerisch). ' +
-        'Paginiert mit limit/page; auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
-        'Returns: Array mit username, firstname, lastname, email, department_id, price_group.',
+        'Nutze dies für Mitarbeiter-Übersichten und um den Username einer Person für andere Tools zu finden. ' +
+        'Filter: personal_number (eine oder mehrere Personalnummern). Paginiert mit limit/page; ' +
+        'auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
+        'Returns: Array mit username, firstname, lastname, email, personal_number, department_id, price_group.',
       inputSchema: ListEmployeesInput.shape,
       annotations: READ_ONLY,
     },
@@ -79,9 +73,10 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Mitarbeiter-Details abrufen',
       description:
-        'Holt einen Mitarbeiter per Username. Param username ist ein String (z.B. "max.mustermann"), ' +
-        'NICHT die numerische interne ID. Returns: Mitarbeiter-Objekt mit username, firstname, lastname, ' +
-        'email, department_id, employment, price_group, created/modified.',
+        'Nutze dies, wenn du Details zu einer bestimmten Person brauchst. Param username ist der String-Username ' +
+        '(z.B. "max.mustermann"), NICHT die numerische interne ID. ' +
+        'Returns: Mitarbeiter-Objekt mit username, firstname, lastname, email, department_id, employment, ' +
+        'price_group, created/modified.',
       inputSchema: GetEmployeeInput.shape,
       annotations: READ_ONLY,
     },
@@ -94,7 +89,8 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Abwesenheiten eines Mitarbeiters',
       description:
-        'Listet Abwesenheiten eines Mitarbeiters per Username (String, nicht ID). Paginiert; auto_paginate möglich. ' +
+        'Nutze dies, um die Abwesenheiten (Urlaub, Krankheit) genau einer Person zu sehen — adressiert per username (String). ' +
+        'Für alle Mitarbeiter zusammen nimm stattdessen zep_list_absences. Paginiert; auto_paginate möglich. ' +
         'Returns: Array von Abwesenheiten mit start_date, end_date, absence_reason_id, approved.',
       inputSchema: EmployeeSubListInput.shape,
       annotations: READ_ONLY,
@@ -108,8 +104,9 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Beschäftigungszeiträume auflisten',
       description:
-        'Listet Beschäftigungszeiträume eines Mitarbeiters (Username, String). Paginiert; auto_paginate möglich. ' +
-        'Returns: Array mit id, start_date, end_date, annual_leave_entitlement.',
+        'Nutze dies, um die Beschäftigungszeiträume (inkl. Urlaubsanspruch) einer Person zu sehen — per username (String). ' +
+        'Paginiert; auto_paginate möglich. ' +
+        'Returns: Array mit id, start_date, end_date, annual_leave_entitlement, period_holiday_entitlement.',
       inputSchema: EmployeeSubListInput.shape,
       annotations: READ_ONLY,
     },
@@ -122,8 +119,9 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Beschäftigungszeitraum-Detail',
       description:
-        'Holt einen Beschäftigungszeitraum per Username (String) + employment_period_id (numerisch). ' +
-        'Returns: Objekt mit start_date, end_date, annual_leave_entitlement, period_holiday_entitlement.',
+        'Nutze dies für die Details eines einzelnen Beschäftigungszeitraums — adressiert per username (String) + ' +
+        'employment_period_id (numerisch, aus der Liste). ' +
+        'Returns: Objekt mit start_date, end_date, annual_leave_entitlement, period_holiday_entitlement, day_absent_in_hours.',
       inputSchema: GetEmploymentPeriodInput.shape,
       annotations: READ_ONLY,
     },
@@ -137,45 +135,12 @@ export function registerEmployeeTools(server: McpServer): void {
   );
 
   server.registerTool(
-    'zep_list_employee_internal_rates',
-    {
-      title: 'Interne Stundensätze auflisten',
-      description:
-        'Listet interne Stundensätze eines Mitarbeiters (Username, String). Paginiert. ' +
-        'Hinweis: in manchen Tenants/Lizenzen nicht aktiviert. Returns: Array mit id, rate, valid_from.',
-      inputSchema: EmployeeSubListInput.shape,
-      annotations: READ_ONLY,
-    },
-    async ({ username, ...rest }) =>
-      runList({ tool: 'zep_list_employee_internal_rates', path: `/employees/${u(username)}/internal-rates`, input: rest, noun: 'interne Stundensätze' }),
-  );
-
-  server.registerTool(
-    'zep_get_employee_internal_rate',
-    {
-      title: 'Interner Stundensatz-Detail',
-      description:
-        'Holt einen internen Stundensatz per Username (String) + internal_rate_id (numerisch). ' +
-        'Hinweis: ggf. nicht lizenziert. Returns: Objekt mit rate, valid_from, valid_to.',
-      inputSchema: GetInternalRateInput.shape,
-      annotations: READ_ONLY,
-    },
-    async ({ username, internal_rate_id }) =>
-      runGet({
-        tool: 'zep_get_employee_internal_rate',
-        path: `/employees/${u(username)}/internal-rates/${internal_rate_id}`,
-        summary: `Interner Stundensatz ${internal_rate_id} von ${username} geladen.`,
-        ctx: { username, internal_rate_id },
-      }),
-  );
-
-  server.registerTool(
     'zep_list_employee_regular_working_times',
     {
       title: 'Regelarbeitszeiten auflisten',
       description:
-        'Listet Regelarbeitszeiten eines Mitarbeiters (Username, String). Paginiert; auto_paginate möglich. ' +
-        'Returns: Array mit id, weekday/hours-Struktur, valid_from.',
+        'Nutze dies, um die Soll-/Regelarbeitszeiten einer Person zu sehen — per username (String). ' +
+        'Paginiert; auto_paginate möglich. Returns: Array mit id, Wochentags-Stunden und Gültigkeitszeitraum.',
       inputSchema: EmployeeSubListInput.shape,
       annotations: READ_ONLY,
     },
@@ -188,7 +153,8 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Regelarbeitszeit-Detail',
       description:
-        'Holt eine Regelarbeitszeit per Username (String) + regular_working_time_id (numerisch). ' +
+        'Nutze dies für die Details einer einzelnen Regelarbeitszeit — per username (String) + ' +
+        'regular_working_time_id (numerisch, aus der Liste). ' +
         'Returns: Objekt mit Wochentags-Stunden und Gültigkeitszeitraum.',
       inputSchema: GetRegularWorkingTimeInput.shape,
       annotations: READ_ONLY,
@@ -203,59 +169,12 @@ export function registerEmployeeTools(server: McpServer): void {
   );
 
   server.registerTool(
-    'zep_list_employee_meals',
-    {
-      title: 'Mahlzeiten auflisten',
-      description:
-        'Listet Mahlzeiten eines Mitarbeiters (Username, String). Paginiert. ' +
-        'Hinweis: in manchen Tenants/Lizenzen nicht aktiviert. Returns: Array von Mahlzeiten-Einträgen.',
-      inputSchema: EmployeeSubListInput.shape,
-      annotations: READ_ONLY,
-    },
-    async ({ username, ...rest }) =>
-      runList({ tool: 'zep_list_employee_meals', path: `/employees/${u(username)}/meals`, input: rest, noun: 'Mahlzeiten' }),
-  );
-
-  server.registerTool(
-    'zep_get_employee_meal',
-    {
-      title: 'Mahlzeit-Detail',
-      description:
-        'Holt eine Mahlzeit per Username (String) + meal_id (numerisch). ' +
-        'Hinweis: ggf. nicht lizenziert. Returns: Mahlzeiten-Objekt.',
-      inputSchema: GetMealInput.shape,
-      annotations: READ_ONLY,
-    },
-    async ({ username, meal_id }) =>
-      runGet({
-        tool: 'zep_get_employee_meal',
-        path: `/employees/${u(username)}/meals/${meal_id}`,
-        summary: `Mahlzeit ${meal_id} von ${username} geladen.`,
-        ctx: { username, meal_id },
-      }),
-  );
-
-  server.registerTool(
-    'zep_list_employee_projects',
-    {
-      title: 'Projekte eines Mitarbeiters',
-      description:
-        'Listet die Projekte eines Mitarbeiters (Username, String). Paginiert. ' +
-        'Hinweis: in manchen Tenants/Lizenzen nicht aktiviert. Returns: Array von Projekten.',
-      inputSchema: EmployeeSubListInput.shape,
-      annotations: READ_ONLY,
-    },
-    async ({ username, ...rest }) =>
-      runList({ tool: 'zep_list_employee_projects', path: `/employees/${u(username)}/projects`, input: rest, noun: 'Projekte' }),
-  );
-
-  server.registerTool(
     'zep_list_employee_transponders',
     {
       title: 'Transponder eines Mitarbeiters',
       description:
-        'Listet Transponder (RFID/Chip) eines Mitarbeiters (Username, String). Paginiert. ' +
-        'Returns: Array mit Transponder-Kennungen.',
+        'Nutze dies, um die Transponder/Chip-Kennungen einer Person zu sehen (z.B. für Terminal-Zuordnung) — per username (String). ' +
+        'Paginiert. Returns: Array mit Transponder-Kennungen.',
       inputSchema: EmployeeSubListInput.shape,
       annotations: READ_ONLY,
     },
@@ -269,8 +188,9 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Mitarbeiter anlegen',
       description:
-        'Legt einen Mitarbeiter an. Pflichtfelder: username (eindeutig), firstname, lastname. ' +
-        'Optional: email, department_id, abbreviation, Adresse u.a. Returns: angelegtes Mitarbeiter-Objekt.',
+        'Legt einen neuen Mitarbeiter an. Pflicht: username (5–255, eindeutig), firstname, lastname, email, ' +
+        'password (8–48 Zeichen), price_group. Optional: department_id, rights, employment, Adresse u.a. ' +
+        'Returns: angelegtes Mitarbeiter-Objekt.',
       inputSchema: CreateEmployeeInput.shape,
       annotations: WRITE_NON_DESTRUCTIVE,
     },
@@ -289,8 +209,8 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Mitarbeiter aktualisieren',
       description:
-        'Aktualisiert einen Mitarbeiter per Username (String). Akzeptiert Partial-Updates: nur gesetzte Felder ' +
-        'werden geändert (intern GET-merge-PUT). Returns: aktualisiertes Mitarbeiter-Objekt.',
+        'Aktualisiert einen Mitarbeiter per username (String). Partial-Update: nur gesetzte Felder werden geändert ' +
+        '(intern GET-merge-PUT). username und Passwort werden hier nicht geändert. Returns: aktualisiertes Mitarbeiter-Objekt.',
       inputSchema: UpdateEmployeeInput.shape,
       annotations: DESTRUCTIVE,
     },
@@ -311,7 +231,7 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Beschäftigungszeitraum anlegen',
       description:
-        'Legt einen Beschäftigungszeitraum für einen Mitarbeiter an (Username, String). Pflicht: start_date (YYYY-MM-DD). ' +
+        'Legt einen Beschäftigungszeitraum für einen Mitarbeiter an (username, String). Pflicht: start_date (YYYY-MM-DD). ' +
         'Optional: end_date, annual_leave_entitlement u.a. Returns: angelegter Zeitraum.',
       inputSchema: CreateEmploymentPeriodInput.shape,
       annotations: WRITE_NON_DESTRUCTIVE,
@@ -335,7 +255,7 @@ export function registerEmployeeTools(server: McpServer): void {
     {
       title: 'Beschäftigungszeitraum aktualisieren',
       description:
-        'Aktualisiert einen Beschäftigungszeitraum per Username (String) + employment_period_id (numerisch). ' +
+        'Aktualisiert einen Beschäftigungszeitraum per username (String) + employment_period_id (numerisch). ' +
         'Partial-Update via GET-merge-PUT. Returns: aktualisierter Zeitraum.',
       inputSchema: UpdateEmploymentPeriodInput.shape,
       annotations: DESTRUCTIVE,

@@ -29,7 +29,8 @@ export function registerAbsenceTools(server: McpServer): void {
     {
       title: 'Abwesenheiten auflisten',
       description:
-        'Listet ZEP-Abwesenheiten. Optionale Filter employee_id (Username, String), start_date/end_date (YYYY-MM-DD). ' +
+        'Nutze dies, um Abwesenheiten aller Mitarbeiter zu sehen (z.B. "wer ist heute nicht da?"). ' +
+        'Optionale Filter: employee_id (Username, String), start_date/end_date (YYYY-MM-DD). ' +
         'Paginiert mit limit/page; auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
         'Returns: Array mit id, employee_id, absence_reason_id, start_date, end_date, approved.',
       inputSchema: ListAbsencesInput.shape,
@@ -58,10 +59,11 @@ export function registerAbsenceTools(server: McpServer): void {
     {
       title: 'Abwesenheit anlegen',
       description:
-        'Legt eine Abwesenheit an. Pflichtfelder: employee_id (Username, String), absence_reason_id (Fehlgrund-Code, ' +
-        'z.B. "KR"), start_date, end_date (YYYY-MM-DD). Optional: type, hours, from, to, note, timezone. ' +
+        'Trägt eine Abwesenheit ein (z.B. Urlaub oder Krankheit). Pflichtfelder: employee_id (Username, String), ' +
+        'absence_reason_id (Fehlgrund-Code, z.B. "KR", siehe zep://master-data/absence-reasons), from und to ' +
+        '(Zeitraum als Datum YYYY-MM-DD). Optional: days, half_day_from, half_day_to, comment, approval_status. ' +
         'Einmal erstellt, kann eine Abwesenheit nicht via API geändert oder gelöscht werden — Änderungen müssen in der ZEP-UI erfolgen. ' +
-        'Returns: angelegtes Abwesenheits-Objekt.',
+        'Returns: angelegte Abwesenheit.',
       inputSchema: CreateAbsenceInput.shape,
       annotations: WRITE_NON_DESTRUCTIVE,
     },

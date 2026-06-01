@@ -19,8 +19,9 @@ export function registerDepartmentTools(server: McpServer): void {
     {
       title: 'Abteilungen auflisten',
       description:
-        'Listet ZEP-Abteilungen. Paginiert mit limit/page; auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
-        'Returns: Array mit id, parent_id, name, description, manager_count, children_count.',
+        'Nutze dies für eine Abteilungs-Übersicht (z.B. "alle Abteilungen mit Mitarbeiterzahl"). Keine Filter; ' +
+        'auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
+        'Returns: Array mit id, parent_id, name, description, children_count.',
       inputSchema: ListDepartmentsInput.shape,
       annotations: READ_ONLY,
     },
@@ -46,8 +47,8 @@ export function registerDepartmentTools(server: McpServer): void {
     {
       title: 'Unterabteilungen auflisten',
       description:
-        'Listet die Unterabteilungen einer Abteilung per numerischer ID. Paginiert; auto_paginate möglich. ' +
-        'Returns: Array mit id, parent_id, name, description.',
+        'Nutze dies, um die direkten Unterabteilungen einer Abteilung zu sehen — adressiert per numerischer id. ' +
+        'auto_paginate möglich. Returns: Array mit id, parent_id, name, description.',
       inputSchema: DepartmentSubListInput.shape,
       annotations: READ_ONLY,
     },
@@ -60,7 +61,7 @@ export function registerDepartmentTools(server: McpServer): void {
     {
       title: 'Mitarbeiter einer Abteilung',
       description:
-        'Listet die Mitarbeiter einer Abteilung per numerischer ID. Paginiert; auto_paginate möglich. ' +
+        'Nutze dies, um die Mitarbeiter einer Abteilung zu sehen — adressiert per numerischer id. auto_paginate möglich. ' +
         'Returns: Array von Mitarbeitern mit username, firstname, lastname, email, department_id.',
       inputSchema: DepartmentSubListInput.shape,
       annotations: READ_ONLY,

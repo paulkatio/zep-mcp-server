@@ -33,8 +33,9 @@ export function registerAttendanceTools(server: McpServer): void {
     {
       title: 'Projektzeiten auflisten',
       description:
-        'Listet Projektzeiten (Attendances). Optionale Filter: employee_id (Mitarbeiter-Username, String), ' +
-        'start_date/end_date (YYYY-MM-DD). Paginiert mit limit/page; auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
+        'Nutze dies, um erfasste Projektzeiten/Anwesenheiten zu sehen (z.B. "meine Zeiten diese Woche"). ' +
+        'Optionale Filter: employee_id (Username, String), start_date/end_date (YYYY-MM-DD). ' +
+        'Paginiert mit limit/page; auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
         'Returns: Array mit id, date, from, to, employee_id, duration, department_id.',
       inputSchema: ListAttendancesInput.shape,
       annotations: READ_ONLY,
@@ -62,8 +63,10 @@ export function registerAttendanceTools(server: McpServer): void {
     {
       title: 'Projektzeit anlegen',
       description:
-        'Legt eine Projektzeit an. Pflichtfelder: employee_id (Mitarbeiter-Username, String), date (YYYY-MM-DD), ' +
-        'from/to (HH:MM). Optional: note, department_id. Returns: angelegte Projektzeit.',
+        'Bucht eine Projektzeit (Zeiteintrag). ERFORDERT das Projektverwaltungs-Modul — Pflichtfelder: employee_id ' +
+        '(Username, String), date (YYYY-MM-DD), from/to (HH:MM), project_id und project_task_id (numerisch) sowie ' +
+        'activity_id (Tätigkeit, siehe zep://master-data/activities). Optional: duration, billable, is_travel. ' +
+        'Returns: angelegte Projektzeit.',
       inputSchema: CreateAttendanceInput.shape,
       annotations: WRITE_NON_DESTRUCTIVE,
     },
