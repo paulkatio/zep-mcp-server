@@ -11,9 +11,10 @@ export default defineConfig({
   clean: true,
   sourcemap: false,
   dts: false,
-  // Single-file output: inline all npm dependencies (zod et al.).
-  // Node built-ins stay external automatically on platform: 'node'.
-  noExternal: [/.*/],
+  // Externalize npm dependencies (the default). They are installed normally via
+  // package.json "dependencies" when the package is run with npx. Inlining CJS
+  // deps (pino/undici/ajv) into an ESM bundle breaks at runtime with
+  // "Dynamic require of 'assert' is not supported".
   banner: { js: '#!/usr/bin/env node' },
   outDir: 'dist',
 });
