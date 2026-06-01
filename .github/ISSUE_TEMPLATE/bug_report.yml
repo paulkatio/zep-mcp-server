@@ -1,0 +1,80 @@
+name: Bug report
+description: Report a problem with a tool, resource, or the server itself.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! **Do not paste your `ZEP_API_TOKEN` or any real tenant
+        data.** Redact tokens, usernames and customer data from logs before posting.
+
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Affected tool / resource
+      options:
+        - zep_list_employees
+        - zep_get_employee
+        - zep_list_employee_absences
+        - zep_list_employee_employment_periods
+        - zep_get_employee_employment_period
+        - zep_list_employee_regular_working_times
+        - zep_get_employee_regular_working_time
+        - zep_list_employee_transponders
+        - zep_list_attendances
+        - zep_get_attendance
+        - zep_create_attendance
+        - zep_list_absences
+        - zep_get_absence
+        - zep_create_absence
+        - zep_list_departments
+        - zep_get_department
+        - zep_list_department_children
+        - zep_list_department_employees
+        - zep_list_devices
+        - zep_get_device
+        - zep_create_employee
+        - zep_update_employee
+        - zep_create_employment_period
+        - zep_update_employment_period
+        - "Resource: zep://master-data/*"
+        - Other / not tool-specific
+    validations:
+      required: true
+
+  - type: input
+    id: zep-version
+    attributes:
+      label: ZEP version
+      placeholder: "e.g. 7.8.74"
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      placeholder: "e.g. 20.11.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The prompt / tool call and inputs that trigger the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-actual
+    attributes:
+      label: Expected vs actual
+      description: What you expected to happen, and what actually happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs (optional)
+      description: Relevant stderr output. **Redact the token and any PII first.**
+      render: shell

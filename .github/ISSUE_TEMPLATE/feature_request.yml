@@ -1,0 +1,43 @@
+name: Feature request
+description: Suggest a new tool, ZEP module, or improvement.
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: Which ZEP module / area?
+      options:
+        - Tickets
+        - Customers (CRM)
+        - Projects (Projektverwaltung)
+        - Finance (offers, invoices, articles, receipts)
+        - Master data (locations, folders, dynamic attributes)
+        - HR / time-tracking (existing scope)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Use case
+      description: What do you want to do, and why? What would the ideal prompt look like?
+    validations:
+      required: true
+
+  - type: textarea
+    id: endpoints
+    attributes:
+      label: Relevant ZEP endpoints (optional)
+      description: If you know them, list the REST endpoints (see schemas/zep-inventory.json).
+
+  - type: dropdown
+    id: pr
+    attributes:
+      label: Would you be willing to submit a PR?
+      options:
+        - "Yes"
+        - "No"
+        - "Maybe, with guidance"
+    validations:
+      required: true
