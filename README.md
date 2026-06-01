@@ -1,19 +1,20 @@
 # ZEP MCP Server — HR & Zeiterfassung
 
-[![npm version](https://img.shields.io/npm/v/@ssig-it/zep-mcp-server.svg)](https://www.npmjs.com/package/@ssig-it/zep-mcp-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![CI](https://github.com/paulkatio/zep-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/paulkatio/zep-mcp-server/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 [![MCP](https://img.shields.io/badge/MCP-compatible-blue.svg)](https://modelcontextprotocol.io)
 
-<!-- mcp-name: io.github.paulkatio/zep-mcp-server -->
-
 > 🇬🇧 [English version](./README.en.md)
 
 MCP-Server für die [ZEP](https://www.zep.de) REST-API (Ziel-Stand v7.8.74), fokussiert auf
 **HR- und Zeiterfassungs-Workflows**: Mitarbeiter, Projektzeiten/Anwesenheiten, Abwesenheiten,
-Abteilungen und Terminals. Läuft per `npx` in jedem MCP-Client (Claude Desktop, Claude Code,
-Cursor, VS Code u.a.) über stdio.
+Abteilungen und Terminals. Läuft als lokaler stdio-Server in jedem MCP-Client (Claude Desktop,
+Claude Code, Cursor, VS Code u.a.) oder self-hosted über eine MetaMCP-Instanz wie MCPHub.
+
+> **Distribution:** self-hosted via Git clone — **kein npm-Package**. Der Build erfolgt lokal beim
+> Konsumenten (`npm install && npm run build`). Siehe [Installation](#installation--konfiguration)
+> und den [MCPHub-Deployment-Guide](./docs/DEPLOY-MCPHUB.md).
 
 ## Warum dieser Server
 
@@ -30,6 +31,7 @@ Module-Gate-Verhalten für nicht lizenzierte Bereiche.
 - [Was dieser Server (noch) NICHT kann](#was-dieser-server-noch-nicht-kann)
 - [Voraussetzungen](#voraussetzungen)
 - [Installation & Konfiguration](#installation--konfiguration)
+- [Distribution & Hosting](#distribution--hosting)
 - [Tool-Übersicht](#tool-übersicht)
 - [Identifier-Konventionen](#identifier-konventionen-️)
 - [Environment Variables](#environment-variables)
@@ -67,8 +69,17 @@ Bedarf? **Issues und PRs sind willkommen.**
 
 ## Installation & Konfiguration
 
-Kein Build nötig — der Server wird per `npx` gestartet. `ZEP_TENANT` ist das Pfadsegment deiner
-ZEP-Login-URL (`https://www.zep-online.de/<TENANT>/…`), im Beispiel `zepssigit`.
+Dieser Server wird **nicht über npm** verteilt — er wird lokal geklont und gebaut:
+
+```bash
+git clone https://github.com/paulkatio/zep-mcp-server.git
+cd zep-mcp-server
+npm install
+npm run build      # erzeugt dist/index.js
+```
+
+`ZEP_TENANT` ist das Pfadsegment deiner ZEP-Login-URL (`https://www.zep-online.de/<TENANT>/…`),
+im Beispiel `zepssigit`. Trage in deinem MCP-Client den **absoluten Pfad** zu `dist/index.js` ein:
 
 ### Claude Desktop
 
@@ -78,8 +89,8 @@ ZEP-Login-URL (`https://www.zep-online.de/<TENANT>/…`), im Beispiel `zepssigit
 {
   "mcpServers": {
     "zep": {
-      "command": "npx",
-      "args": ["-y", "@ssig-it/zep-mcp-server"],
+      "command": "node",
+      "args": ["/absoluter/pfad/zu/zep-mcp-server/dist/index.js"],
       "env": { "ZEP_API_TOKEN": "dein-bearer-token", "ZEP_TENANT": "zepssigit" }
     }
   }
@@ -88,14 +99,14 @@ ZEP-Login-URL (`https://www.zep-online.de/<TENANT>/…`), im Beispiel `zepssigit
 
 ### Cursor
 
-`~/.cursor/mcp.json` (oder `.cursor/mcp.json` im Projekt):
+`~/.cursor/mcp.json` (oder `.cursor/mcp.json` im Projekt) — gleiche Struktur:
 
 ```json
 {
   "mcpServers": {
     "zep": {
-      "command": "npx",
-      "args": ["-y", "@ssig-it/zep-mcp-server"],
+      "command": "node",
+      "args": ["/absoluter/pfad/zu/zep-mcp-server/dist/index.js"],
       "env": { "ZEP_API_TOKEN": "dein-bearer-token", "ZEP_TENANT": "zepssigit" }
     }
   }
@@ -105,8 +116,20 @@ ZEP-Login-URL (`https://www.zep-online.de/<TENANT>/…`), im Beispiel `zepssigit
 ### Claude Code
 
 ```bash
-claude mcp add zep --env ZEP_API_TOKEN=dein-bearer-token --env ZEP_TENANT=zepssigit -- npx -y @ssig-it/zep-mcp-server
+claude mcp add zep \
+  --env ZEP_API_TOKEN=dein-bearer-token --env ZEP_TENANT=zepssigit \
+  -- node /absoluter/pfad/zu/zep-mcp-server/dist/index.js
 ```
+
+## Distribution & Hosting
+
+Dieser Server ist **nicht auf npm**. Er wird self-hosted via Git clone betrieben. Empfohlene Setups:
+
+- **Lokal** in Claude Desktop / Cursor / Claude Code (siehe oben).
+- **Self-hosted MCPHub** (MetaMCP-Instanz, z.B. `mcp.ssig-it.com`) — zentral für mehrere Clients.
+  Schritt-für-Schritt: **[docs/DEPLOY-MCPHUB.md](./docs/DEPLOY-MCPHUB.md)**.
+
+Updates: `git pull && npm ci && npm run build`, dann den Server im Client/Hub neu starten.
 
 ## Tool-Übersicht
 
@@ -215,7 +238,7 @@ nutzt und PRs einreicht. Die 51 noch nicht implementierten Endpunkte sind in
 
 Architektur-Details in [`BLUEPRINT.md`](./BLUEPRINT.md). Schema-Quelle:
 [`schemas/zep-openapi-v7.4.0.yaml`](./schemas/zep-openapi-v7.4.0.yaml) (deckt nur einen Teil ab; HR-Bodies
-sind in `src/schemas/manual.ts` gepflegt). PRs bitte mit Tests (`npm test`) und Changeset.
+sind in `src/schemas/manual.ts` gepflegt). PRs bitte mit Tests (`npm test`) und einem `CHANGELOG.md`-Eintrag.
 
 ## Lizenz
 

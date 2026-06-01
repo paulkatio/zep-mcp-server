@@ -1,6 +1,7 @@
 {
   "name": "@ssig-it/zep-mcp-server",
   "version": "0.1.0",
+  "private": true,
   "description": "MCP server for ZEP HR & time-tracking (employees, attendances, absences, departments, devices)",
   "license": "MIT",
   "author": "Paul-Harald Katio <paulkatio@gmail.com>",
@@ -37,9 +38,6 @@
   "bugs": {
     "url": "https://github.com/paulkatio/zep-mcp-server/issues"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "build": "tsup",
     "dev": "tsx watch src/index.ts",
@@ -47,10 +45,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "sync-spec": "tsx scripts/sync-spec.ts",
-    "generate-zod": "tsx scripts/generate-zod.ts",
-    "changeset": "changeset",
-    "release": "changeset publish",
-    "prepublishOnly": "npm run build"
+    "generate-zod": "tsx scripts/generate-zod.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

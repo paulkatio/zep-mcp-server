@@ -1,13 +1,11 @@
 # Changelog
 
 All notable changes to this project are documented here. This project adheres to
-[Semantic Versioning](https://semver.org) and uses
-[Changesets](https://github.com/changesets/changesets) for releases.
+[Semantic Versioning](https://semver.org).
 
 ## 0.1.0 — Initial release
 
-ZEP MCP Server for **HR & time-tracking** — stdio MCP server for the ZEP REST API,
-runnable via `npx`.
+ZEP MCP Server for **HR & time-tracking** — stdio MCP server for the ZEP REST API.
 
 ### Added
 
@@ -33,6 +31,8 @@ runnable via `npx`.
 
 ### Notes
 
+- **Distribution strategy:** self-hosted via Git clone — **no npm package**. The build runs
+  locally at the consumer (`npm install && npm run build`); see [`docs/DEPLOY-MCPHUB.md`](./docs/DEPLOY-MCPHUB.md).
 - Verified against ZEP v7.8.74. The finance, project-management, ticket, CRM and
   master-data modules are **out of scope** for v0.1.0; their ~51 endpoints are
   documented in [`schemas/zep-inventory.json`](./schemas/zep-inventory.json).

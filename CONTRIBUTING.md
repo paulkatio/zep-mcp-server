@@ -24,8 +24,8 @@ Node ≥ 20 is required.
 - Commits: [Conventional Commits](https://www.conventionalcommits.org)
   (`feat:`, `fix:`, `chore:`, `docs:`, `test:`, `ci:`). **Do not add a co-author
   trailer** (no `Co-Authored-By:`) — keep authorship clean.
-- Every change that affects the published package needs a Changeset:
-  `npx changeset` → pick the bump → commit the generated file.
+- There is no npm publish — distribution is Git-clone/self-hosted. For user-facing changes,
+  add an entry to `CHANGELOG.md` and bump `version` in `package.json` when appropriate.
 
 ## Tests are mandatory for new tools
 
@@ -49,7 +49,7 @@ The 51 endpoints ZEP exposes beyond HR/time are listed in
    (When/How/What descriptions, `runList`/`runGet`/`getMergePut` helpers, annotations),
    and register them in `src/server.ts`.
 4. **Tests** — add `tests/unit/tools/<module>.test.ts`.
-5. **Docs** — update the tool tables in both READMEs and add a Changeset.
+5. **Docs** — update the tool tables in both READMEs and add a `CHANGELOG.md` entry.
 
 ## Live integration tests
 
