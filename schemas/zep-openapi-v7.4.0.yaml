@@ -1,0 +1,3110 @@
+openapi: 3.0.3
+info:
+  title: ZEP REST API
+  description:
+    This is the ZEP REST API based on the OpenAPI 3.0 specification.
+  contact:
+    email: support@zep.de
+  version: 7.4.0
+externalDocs:
+  description: Developer Hub
+  url: https://developer.zep.de
+tags:
+  - name: Projects
+    description: You can use this endpoint get a paginated list of all projects.
+  - name: Attendances
+    description: You can use this endpoint get a paginated list of all attendances.
+  - name: Employees
+    description: You can use this endpoint get a paginated list of all employees.
+  - name: Customers
+    description: You can use this endpoint get a paginated list of all customers.
+  - name: Absences
+    description: You can use this endpoint get a paginated list of all absences.
+  - name: Departments
+    description: You can use this endpoint get a paginated list of all departments.
+  - name: Devices
+    description: You can use this endpoint get a paginated list of all devices.
+  - name: Receipts
+    description: You can use this endpoint get a paginated list of all receipts.
+  - name: Tickets
+    description: You can use this endpoint get a paginated list of all tickets.
+paths:
+  /projects:
+    get:
+      tags:
+        - Projects
+      description: Get all projects
+      parameters:
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: id[]
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /projects/{id}:
+    get:
+      tags:
+        - Projects
+      description: Get project by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectWithPricesResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{id}/activities:
+    get:
+      tags:
+        - Projects
+      description: Get project activities
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivitiesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{id}/employees:
+    get:
+      tags:
+        - Projects
+      description: Get the employees of a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectEmployeesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{id}/tasks:
+    get:
+      tags:
+        - Projects
+      description: Get project tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectTasksListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{id}/tasks/{task_id}:
+    get:
+      tags:
+        - Projects
+      description: Get project task by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectTaskResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /projects/{id}/price-tables:
+    get:
+      tags:
+        - Projects
+      description: Get project price tables
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectPriceTablesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /attendances:
+    get:
+      tags:
+        - Attendances
+      description: Get all attendances
+      parameters:
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: employee_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendancesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Attendances
+      description: Create a new attendance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - employee_id
+                - date
+                - from
+                - to
+                - project_task_id
+                - project_id
+                - activity_id
+              properties:
+                employee_id:
+                  type: string
+                  description: The username of the employee creating the project time entry.
+                date:
+                  type: string
+                  format: date
+                  description: The date of the project time entry.
+                from:
+                  type: string
+                  format: time
+                  description: Start time of the project time entry (format H:i:s).
+                to:
+                  type: string
+                  format: time
+                  description: End time of the project time entry (format H:i:s). Must be after `from`.
+                project_task_id:
+                  type: integer
+                  description: The ID of the related project task.
+                project_id:
+                  type: integer
+                  description: The ID of the related project.
+                activity_id:
+                  type: string
+                  description: The ID of the associated activity.
+                duration:
+                  type: number
+                  format: float
+                  description: Total duration of the project time in hours.
+                locked:
+                  type: boolean
+                  description: Indicates whether the project time entry is locked.
+                is_travel:
+                  type: boolean
+                  description: Indicates whether this time entry counts as travel time.
+                billable:
+                  type: boolean
+                  description: Indicates whether the time entry is billable.
+                work_location_is_project_relevant:
+                  type: boolean
+                  description: Indicates whether the work location is project-related.
+                color:
+                  type: string
+                  pattern: '^#(?:[0-9a-fA-F]{3}){1,2}$'
+                  description: Hex color value (e.g. #FF5733).
+                start:
+                  type: string
+                  description: Starting point of the trip.
+                destination:
+                  type: string
+                  description: Destination of the trip.
+                vehicle_id:
+                  type: integer
+                  description: The ID of the vehicle used.
+                private:
+                  type: boolean
+                  description: Indicates whether the trip was private.
+                km:
+                  type: integer
+                  description: Distance traveled in kilometers.
+                passengers:
+                  type: integer
+                  description: Number of passengers.
+                direction_of_travel:
+                  type: string
+                  enum: [ outbound, return, continue ]
+                  description: Direction of travel (e.g. continue).
+      responses:
+        '201':
+          description: Attendance created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid input
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /employees:
+    get:
+      tags:
+        - Employees
+      description: Get all employees
+      parameters:
+        - name: personal_number[]
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Employees
+      description: Create a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - firstname
+                - lastname
+                - email
+                - password
+                - price_group
+              properties:
+                username:
+                  type: string
+                  description: Unique username (5–255 characters)
+                firstname:
+                  type: string
+                  description: First name
+                lastname:
+                  type: string
+                  description: Last name
+                email:
+                  type: string
+                  format: email
+                  description: Unique email address
+                password:
+                  type: string
+                  format: password
+                  description: Password (min. 8 characters, max. 48)
+                personal_number:
+                  type: string
+                  nullable: true
+                  description: Personal number (optional, unique)
+                birthdate:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: Birth date
+                phone:
+                  type: string
+                  nullable: true
+                  description: Work phone number
+                department_id:
+                  type: integer
+                  nullable: true
+                  description: Department ID
+                rights:
+                  type: string
+                  nullable: true
+                  enum: [ 0, 1, 2, 3, 4 ] # 0 = User, 1 = Admin, 2 = Controller, 3 = User with additional authorizations, 4 = Project Controller
+                  description: Access rights
+                employment:
+                  type: string
+                  nullable: true
+                  enum: [ 0, 1, 2 ] # 0 = Employee, 1 = Freelancer, 2 = Freelancer with credit note
+                  description: Type of employment
+                price_group:
+                  type: string
+                  description: Name of the price group
+                oauthUsername:
+                  type: string
+                  nullable: true
+                  description: OAuth username (must be unique)
+                street:
+                  type: string
+                  nullable: true
+                zip:
+                  type: string
+                  nullable: true
+                city:
+                  type: string
+                  nullable: true
+                country:
+                  type: string
+                  nullable: true
+                abbreviation:
+                  type: string
+                  nullable: true
+                salutation:
+                  type: string
+                  nullable: true
+                title:
+                  type: string
+                  nullable: true
+                mobile:
+                  type: string
+                  nullable: true
+                fax:
+                  type: string
+                  nullable: true
+                private_phone:
+                  type: string
+                  nullable: true
+                iban:
+                  type: string
+                  nullable: true
+                bic:
+                  type: string
+                  nullable: true
+                account_no:
+                  type: string
+                  nullable: true
+                bank_name:
+                  type: string
+                  nullable: true
+                bank_code:
+                  type: string
+                  nullable: true
+                currency:
+                  type: string
+                  nullable: true
+                approval_date:
+                  type: string
+                  format: date
+                  nullable: true
+                vat:
+                  type: string
+                  nullable: true
+                personio_id:
+                  type: string
+                  nullable: true
+                cost_bearer:
+                  type: string
+                  nullable: true
+                tax_id:
+                  type: string
+                  nullable: true
+                creditor_number:
+                  type: string
+                  nullable: true
+                categories:
+                  type: array
+                  items:
+                    type: string
+                  nullable: true
+                dynamicAttributes:
+                  type: array
+                  items:
+                    type: object
+                  nullable: true
+      responses:
+        '201':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid input
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '409':
+          description: Duplicate field value (e.g. username, email)
+  /employees/{username}:
+    get:
+      tags:
+        - Employees
+      description: Get employee by username
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{username}/absences:
+    get:
+      tags:
+        - Employees
+      description: Get absences of an employee
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeAbsencesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{username}/employment-periods:
+    get:
+      tags:
+        - Employees
+      description: Get employment periods of an employee
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentPeriodsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{username}/employment-periods/{id}:
+    get:
+      tags:
+        - Employees
+      description: Get employment period by id
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmploymentPeriodResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{username}/internal-rates:
+    get:
+      tags:
+        - Employees
+      description: Get internal rates of an employee
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalRatesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{username}/internal-rates/{id}:
+    get:
+      tags:
+        - Employees
+      description: Get internal rate by id
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalRateResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{username}/regular-working-times:
+    get:
+      tags:
+        - Employees
+      description: Get regular working times of an employee
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegularWorkingTimesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /employees/{username}/regular-working-times/{id}:
+    get:
+      tags:
+        - Employees
+      description: Get regular working time by id
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegularWorkingTimeResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /customers:
+    get:
+      tags:
+        - Customers
+      description: Get all customers
+      parameters:
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: customer_number[]
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomersListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /customers/{customer_number}:
+    get:
+      tags:
+        - Customers
+      description: Get customer by customer_number
+      parameters:
+        - name: customer_number
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /customers/{customer_number}/contacts:
+    get:
+      tags:
+        - Customers
+      description: Get customer contacts
+      parameters:
+        - name: customer_number
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerContactsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /absences:
+    get:
+      tags:
+        - Absences
+      description: Get all absences
+      parameters:
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: employee_id
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbsencesListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /absences/{id}:
+    get:
+      tags:
+        - Absences
+      description: Get absence by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AbsenceDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /departments:
+    get:
+      tags:
+        - Departments
+      description: Get all departments
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartmentListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /departments/{id}:
+    get:
+      tags:
+        - Departments
+      description: Get department by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartmentResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /devices:
+    get:
+      tags:
+        - Devices
+      description: Get all devices
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /devices/{id}:
+    get:
+      tags:
+        - Devices
+      description: Get devices by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /receipts:
+    get:
+      tags:
+        - Receipts
+      description: Get all receipts
+      parameters:
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /receipts/{id}:
+    get:
+      tags:
+        - Receipts
+      description: Get receipt by receipt id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /receipts/{id}/amounts:
+    get:
+      tags:
+        - Receipts
+      description: Get receipt amounts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptAmountsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /receipts/{id}/amounts/{amount_id}:
+    get:
+      tags:
+        - Receipts
+      description: Get receipt amount by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: amount_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReceiptAmountResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /tickets:
+    get:
+      tags:
+        - Tickets
+      description: Get all tickets
+      parameters:
+        - name: start_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketsListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /tickets/{id}:
+    get:
+      tags:
+        - Tickets
+      description: Get ticket by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDetailResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /tickets/{id}/subtasks:
+    get:
+      tags:
+        - Tickets
+      description: Get ticket subtasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketSubtasksListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /tickets/{id}/subtasks/{subtask_id}:
+    get:
+      tags:
+        - Tickets
+      description: Get ticket subtask by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: subtask_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketSubtaskResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+servers:
+  - url: "https://www.zep-online.de/{zepinstanz}/next/api/v1"
+    variables:
+      zepinstanz:
+        description: The ZEP instance name
+        default: "zepinstanz"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  responses:
+    NotFound:
+      description: Entity not found
+    UnauthorizedError:
+      description: Bearer token is missing or invalid
+  schemas:
+    PaginationLinks:
+      type: object
+      properties:
+        first:
+          type: string
+          format: uri
+        last:
+          type: string
+          format: uri
+        prev:
+          type: string
+          format: uri
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        from:
+          type: integer
+        last_page:
+          type: integer
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                format: uri
+                nullable: true
+              label:
+                type: string
+              active:
+                type: boolean
+        path:
+          type: string
+          format: uri
+        per_page:
+          type: integer
+        to:
+          type: integer
+        total:
+          type: integer
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        project_status_id:
+          type: string
+        status:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            description:
+              type: string
+            bookable:
+              type: boolean
+            order:
+              type: integer
+            color:
+              type: string
+              nullable: true
+            abrechnungsrelevant:
+              type: integer
+        comments:
+          type: string
+          nullable: true
+        cost_object:
+          type: string
+          nullable: true
+        cost_object_identifier:
+          type: string
+          nullable: true
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        keywords:
+          type: array
+          items:
+            type: string
+        reference_order:
+          type: string
+          nullable: true
+        reference_commission:
+          type: string
+          nullable: true
+        reference_procurement:
+          type: string
+          nullable: true
+        reference_object:
+          type: string
+          nullable: true
+        language:
+          type: string
+          nullable: true
+        currency:
+          type: string
+        url:
+          type: string
+          nullable: true
+        location_address:
+          type: string
+          nullable: true
+        location_city:
+          type: string
+          nullable: true
+        location_state:
+          type: string
+          nullable: true
+        location_country:
+          type: string
+          nullable: true
+        revenue_account:
+          type: string
+          nullable: true
+        customer_id:
+          type: integer
+          nullable: true
+        customer_contact_id:
+          type: integer
+          nullable: true
+        customer_project_reference:
+          type: string
+          nullable: true
+        customer_billing_address_id:
+          type: integer
+          nullable: true
+        customer_shipping_address_id:
+          type: integer
+          nullable: true
+        has_multiple_customers:
+          type: boolean
+          nullable: true
+        department_id:
+          type: integer
+        billing_type:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        billing_tasks:
+          type: string
+          nullable: true
+        plan_hours:
+          type: number
+          nullable: true
+        plan_hours_children:
+          type: number
+        plan_hours_per_day:
+          type: number
+          nullable: true
+        plan_can_exceed:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        plan_warning_percent:
+          type: number
+          nullable: true
+        plan_warning_percent_2:
+          type: number
+          nullable: true
+        plan_warning_percent_3:
+          type: number
+          nullable: true
+        plan_wage:
+          type: number
+          nullable: true
+        plan_expenses:
+          type: string
+        plan_expenses_travel:
+          type: number
+          nullable: true
+        plan_hours_done:
+          type: number
+        plan_hours_invoiced:
+          type: number
+        default_billability:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        receipts_billability:
+          type: string
+          nullable: true
+        plan_wage_children:
+          type: number
+        categories:
+          type: array
+          items:
+            type: string
+        dynamicAttributes:
+          type: array
+          items:
+            type: object
+        tasks_count:
+          type: integer
+        employees_count:
+          type: integer
+        activities_count:
+          type: integer
+        priceTables:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceTable'
+
+    ProjectsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ProjectWithPricesResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Project'
+
+    PriceTable:
+      type: object
+      properties:
+        id:
+          type: integer
+        start_date:
+          type: string
+          format: date
+        type:
+          $ref: '#/components/schemas/PriceTableType'
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Price'
+        factors:
+          type: array
+          items:
+            type: object # genauer definieren, wenn Beispiel verfügbar
+
+    PriceTableType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    Price:
+      type: object
+      properties:
+        id:
+          type: integer
+        price_group:
+          type: string
+        price:
+          type: string
+        price_table_id:
+          type: integer
+        type:
+          $ref: '#/components/schemas/PriceType'
+
+    PriceType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        default_factor:
+          type: number
+
+    ActivitiesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ProjectEmployee:
+      type: object
+      properties:
+        id:
+          type: integer
+        employee_id:
+          type: string
+        project_id:
+          type: integer
+        from:
+          type: string
+          format: date
+          nullable: true
+        to:
+          type: string
+          format: date
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        availability:
+          type: integer
+          nullable: true
+        internal_rate:
+          type: number
+          nullable: true
+        rate_type:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        type:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        priceGroup:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            number:
+              type: string
+              nullable: true
+            status:
+              type: boolean
+            description:
+              type: object
+              properties:
+                de:
+                  type: string
+
+    ProjectEmployeesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectEmployee'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ProjectTask:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        status:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        parent_id:
+          type: integer
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        billing_type:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        project_id:
+          type: integer
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        plan_hours_children:
+          type: number
+        plan_hours_done:
+          type: number
+        plan_wage:
+          type: number
+        plan_hours:
+          type: number
+        plan_wage_children:
+          type: number
+        plan_hours_invoiced:
+          type: number
+        order_number:
+          type: string
+          nullable: true
+
+    ProjectTasksListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectTask'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ProjectTaskResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ProjectTask'
+
+    ProjectPriceTablesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceTable'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    Attendance:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        from:
+          type: string
+          format: time
+        to:
+          type: string
+          format: time
+        employee_id:
+          type: string
+        department_id:
+          type: integer
+        duration:
+          type: number
+        billable:
+          type: boolean
+        work_location_id:
+          type: string
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        activity_id:
+          type: string
+        start:
+          type: string
+          nullable: true
+        destination:
+          type: string
+          nullable: true
+        vehicle_id:
+          type: integer
+          nullable: true
+        private:
+          type: boolean
+          nullable: true
+        passengers:
+          type: integer
+          nullable: true
+        km:
+          type: integer
+          nullable: true
+        direction_of_travel:
+          type: string
+          nullable: true
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        project_id:
+          type: integer
+        project_task_id:
+          type: integer
+        invoice_item_id:
+          type: integer
+          nullable: true
+        ticket_id:
+          type: integer
+          nullable: true
+        subtask_id:
+          type: integer
+          nullable: true
+        work_location_is_project_relevant:
+          type: boolean
+        issue_id:
+          type: integer
+          nullable: true
+
+    AttendancesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attendance'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    Employee:
+      type: object
+      properties:
+        username:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        personal_number:
+          type: string
+          nullable: true
+        street:
+          type: string
+          nullable: true
+        zip:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        country:
+          type: string
+          nullable: true
+        abbreviation:
+          type: string
+          nullable: true
+        salutation:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        title:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          nullable: true
+        mobile:
+          type: string
+          nullable: true
+        fax:
+          type: string
+          nullable: true
+        private_phone:
+          type: string
+          nullable: true
+        birthdate:
+          type: string
+          format: date-time
+          nullable: true
+        iban:
+          type: string
+          nullable: true
+        bic:
+          type: string
+          nullable: true
+        account_no:
+          type: string
+          nullable: true
+        bank_name:
+          type: string
+          nullable: true
+        bank_code:
+          type: string
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        approval_date:
+          type: string
+          format: date-time
+          nullable: true
+        vat:
+          type: string
+          nullable: true
+        price_group:
+          type: string
+        employment:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        rights:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        department_id:
+          type: integer
+        language:
+          type: object
+          nullable: true
+          properties:
+            locale:
+              type: string
+            isoCode:
+              type: string
+            name:
+              type: string
+            dateFormat:
+              type: string
+            dateTimeFormat:
+              type: string
+            numberFormat:
+              type: object
+              properties:
+                decimalSeparator:
+                  type: string
+                thousandsSeparator:
+                  type: string
+        personio_id:
+          type: string
+          nullable: true
+        cost_bearer:
+          type: string
+          nullable: true
+        tax_id:
+          type: string
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+        creditor_number:
+          type: string
+          nullable: true
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: object
+                properties:
+                  de:
+                    type: string
+          nullable: true
+        dynamicAttributes:
+          type: array
+          items:
+            type: object
+          nullable: true
+
+    EmployeesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Employee'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    EmployeeResponse:
+      type: object
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Employee'
+            - type: object
+              properties:
+                absences_count:
+                  type: integer
+
+    EmployeeAbsence:
+      type: object
+      properties:
+        id:
+          type: integer
+        employee_id:
+          type: string
+        type:
+          type: integer
+          description: 0 = ganztägig, 1 = halbtägig, 2 = stundenweise (z. B.)
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        hours:
+          type: number
+          nullable: true
+        from:
+          type: string
+          format: time
+          nullable: true
+        to:
+          type: string
+          format: time
+          nullable: true
+        note:
+          type: string
+        approved:
+          type: boolean
+        timezone:
+          type: string
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+
+    EmployeeAbsencesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmployeeAbsence'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    EmploymentPeriod:
+      type: object
+      properties:
+        id:
+          type: integer
+        employee_id:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        note:
+          type: string
+          nullable: true
+        beginning_of_year:
+          type: string
+          format: date-time
+          nullable: true
+        annual_leave_entitlement:
+          type: number
+        period_holiday_entitlement:
+          type: number
+        is_holiday_per_year:
+          type: boolean
+          nullable: true
+        day_absent_in_hours:
+          type: number
+          nullable: true
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+
+    EmploymentPeriodsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmploymentPeriod'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    EmploymentPeriodResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/EmploymentPeriod'
+
+    InternalRate:
+      type: object
+      properties:
+        id:
+          type: integer
+        employee_id:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+        internal_rate:
+          type: number
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        monthly_rate:
+          type: number
+          nullable: true
+        internal_rate_resets:
+          type: boolean
+          nullable: true
+        rate_type:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+
+    InternalRatesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/InternalRate'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    InternalRateResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/InternalRate'
+
+    RegularWorkingTime:
+      type: object
+      properties:
+        id:
+          type: integer
+        employee_id:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        monday:
+          type: number
+          nullable: true
+        tuesday:
+          type: number
+          nullable: true
+        wednesday:
+          type: number
+          nullable: true
+        thursday:
+          type: number
+          nullable: true
+        friday:
+          type: number
+          nullable: true
+        saturday:
+          type: number
+          nullable: true
+        sunday:
+          type: number
+          nullable: true
+        is_monthly:
+          type: boolean
+          nullable: true
+        monthly_hours:
+          type: number
+          nullable: true
+        max_hours_in_month:
+          type: number
+          nullable: true
+        max_hours_in_week:
+          type: number
+          nullable: true
+        holidayCalendar:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            note:
+              type: string
+            country:
+              type: string
+            region:
+              type: string
+            created:
+              type: string
+              format: date-time
+            modified:
+              type: string
+              format: date-time
+        breakRegulationType:
+          type: string
+          nullable: true
+
+    RegularWorkingTimesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RegularWorkingTime'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    RegularWorkingTimeResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/RegularWorkingTime'
+
+    Customer:
+      type: object
+      properties:
+        customer_number:
+          type: string
+        name:
+          type: string
+        additional_name:
+          type: string
+          nullable: true
+        website:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        fax:
+          type: string
+          nullable: true
+        currency:
+          type: string
+        comments:
+          type: string
+          nullable: true
+        industry:
+          type: string
+          nullable: true
+        vat:
+          type: string
+        tax_number:
+          type: string
+          nullable: true
+        iban:
+          type: string
+          nullable: true
+        bic:
+          type: string
+          nullable: true
+        payment_target:
+          type: integer
+          nullable: true
+        payment_target_discount:
+          type: number
+          nullable: true
+        status:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+        billing_procedure:
+          type: boolean
+        automated_invoicing:
+          type: boolean
+          nullable: true
+        debit_payment:
+          type: boolean
+          nullable: true
+        department_id:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: object
+          nullable: true
+        dynamicAttributes:
+          type: array
+          items:
+            type: object
+          nullable: true
+        addresses_count:
+          type: integer
+        managers_count:
+          type: integer
+        categories_count:
+          type: integer
+        dynamicAttributes_count:
+          type: integer
+        contacts_count:
+          type: integer
+
+    CustomersListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    CustomerDetailResponse:
+      type: object
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Customer'
+            - type: object
+              properties:
+                addresses:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      address:
+                        type: string
+                      address_line_2:
+                        type: string
+                        nullable: true
+                      address_line_3:
+                        type: string
+                        nullable: true
+                      zip_code:
+                        type: string
+                      city:
+                        type: string
+                      country:
+                        type: string
+                        nullable: true
+                      is_default:
+                        type: boolean
+                      is_billing_address:
+                        type: boolean
+                      is_shipping_address:
+                        type: boolean
+                        nullable: true
+                      email:
+                        type: string
+                        nullable: true
+                      email_cc:
+                        type: string
+                        nullable: true
+                      email_bcc:
+                        type: string
+                        nullable: true
+                      country_code:
+                        type: string
+                        nullable: true
+                      inactive:
+                        type: boolean
+                        nullable: true
+                      machine_readable_invoice_version:
+                        type: string
+                        nullable: true
+                managers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      has_edit_customer_data_permission:
+                        type: boolean
+                        nullable: true
+                      has_budget_responsibility_permission:
+                        type: boolean
+                      is_primary_employee:
+                        type: boolean
+                priceTables:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      start_date:
+                        type: string
+                      customer_number:
+                        type: string
+                      type:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                      prices:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            price_group:
+                              type: string
+                            price:
+                              type: string
+                            price_table_id:
+                              type: integer
+                            type:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                name:
+                                  type: string
+                      factors:
+                        type: array
+                        items:
+                          type: object
+                        nullable: true
+
+    CustomerContact:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        salutation:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        mobile:
+          type: string
+          nullable: true
+        fax:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        primary:
+          type: boolean
+        job_title:
+          type: string
+          nullable: true
+        language:
+          type: string
+          nullable: true
+        inactive:
+          type: boolean
+
+    CustomerContactsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerContact'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    AbsenceReason:
+      type: object
+      properties:
+        name:
+          type: string
+        comment:
+          type: string
+          nullable: true
+        approve:
+          type: boolean
+          nullable: true
+        allow_self_entry:
+          type: boolean
+        allow_half_day_holiday:
+          type: boolean
+        allow_hours_of_vacation:
+          type: boolean
+        anyone_can_see_name:
+          type: boolean
+          nullable: true
+        color:
+          type: string
+        type:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        client_calendar_category:
+          type: string
+          nullable: true
+        inform_employee_upon_approval_or_revocation:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+
+    Absence:
+      type: object
+      properties:
+        id:
+          type: integer
+        employee_id:
+          type: string
+        type:
+          type: integer
+          description: "0 = holiday, 1 = absence"
+        start_date:
+          type: string
+          format: date-time
+        end_date:
+          type: string
+          format: date-time
+        hours:
+          type: string
+          nullable: true
+        from:
+          type: string
+          nullable: true
+        to:
+          type: string
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        approved:
+          type: boolean
+        timezone:
+          type: string
+          nullable: true
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+        absenceReason:
+          $ref: '#/components/schemas/AbsenceReason'
+        leaveApprovalApplication:
+          type: object
+          nullable: true
+
+    AbsencesListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Absence'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    AbsenceDetailResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Absence'
+
+    DepartmentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        comments:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          nullable: true
+        manager_count:
+          type: integer
+        children_count:
+          type: integer
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+          nullable: true
+
+    DepartmentResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DepartmentDetail'
+
+    DepartmentDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        comments:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          nullable: true
+        manager:
+          type: array
+          items:
+            $ref: '#/components/schemas/ManagerShort'
+        children_count:
+          type: integer
+        created:
+          type: string
+          format: date-time
+          nullable: true
+        modified:
+          type: string
+          format: date-time
+
+    ManagerShort:
+      type: object
+      properties:
+        username:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        personal_number:
+          type: string
+          nullable: true
+        email:
+          type: string
+
+    DeviceListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Device'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    Device:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        type:
+          type: integer
+          example: 2
+        status:
+          type: integer
+          example: 0
+        name:
+          type: string
+          example: "App Beispielgerät"
+        password:
+          type: string
+          nullable: true
+        min_time:
+          type: string
+          format: time
+          nullable: true
+        max_time:
+          type: string
+          format: time
+          nullable: true
+        track:
+          type: integer
+          example: 0
+        display_config:
+          type: object
+          nullable: true
+        employees_count:
+          type: integer
+          example: 1
+        categories_count:
+          type: integer
+          example: 0
+
+    DeviceDetailResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/DeviceDetail'
+
+    DeviceDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        type:
+          type: integer
+          example: 2
+        status:
+          type: integer
+          example: 0
+        name:
+          type: string
+          example: "App Beispielgerät"
+        password:
+          type: string
+          nullable: true
+        min_time:
+          type: string
+          format: time
+          nullable: true
+        max_time:
+          type: string
+          format: time
+          nullable: true
+        track:
+          type: integer
+          example: 0
+        display_config:
+          type: object
+          nullable: true
+        employees:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceEmployee'
+        categories:
+          type: array
+          items:
+            type: object  # Leeres Objekt, da keine Felder angegeben
+
+    DeviceEmployee:
+      type: object
+      properties:
+        employee_id:
+          type: string
+          example: "username123"
+
+    Receipt:
+      type: object
+      properties:
+        id:
+          type: integer
+        employee_id:
+          type: string
+        date:
+          type: string
+          format: date
+        receipt_type_id:
+          type: string
+        currency:
+          type: string
+        invoice_amount_currency:
+          type: string
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        payment_method:
+          type: string
+        breakfast:
+          type: integer
+        lunch_or_dinner:
+          type: integer
+        location:
+          type: string
+          nullable: true
+        is_amount_net:
+          type: boolean
+        is_invoice_amount_net:
+          type: boolean
+        billing_status:
+          type: string
+          nullable: true
+        performance_date:
+          type: string
+          format: date
+        client_id:
+          type: integer
+          nullable: true
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        invoice_item_id:
+          type: integer
+          nullable: true
+        project_id:
+          type: integer
+        project_task_id:
+          type: integer
+          nullable: true
+        ticket_id:
+          type: integer
+          nullable: true
+        subtask_id:
+          type: integer
+          nullable: true
+        filename:
+          type: string
+          nullable: true
+
+    ReceiptsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Receipt'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ReceiptDetailResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Receipt'
+
+    ReceiptAmount:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        receipt_id:
+          type: integer
+          example: 2
+        tax:
+          type: string
+          example: "19.0000"
+        quantity:
+          type: string
+          example: "1.0000"
+        amount:
+          type: string
+          example: "70.00"
+        invoicing_share:
+          type: string
+          example: "70.00"
+        private_share:
+          type: string
+          example: "0.00"
+        is_amount_net:
+          type: boolean
+        is_invoice_amount_net:
+          type: boolean
+
+    ReceiptAmountsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReceiptAmount'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    ReceiptAmountResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/ReceiptAmount'
+
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+        subject:
+          type: string
+        priority:
+          type: integer
+        status:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        creator_username:
+          type: string
+        processor_username:
+          type: string
+        date:
+          type: string
+          format: date-time
+        receipt_date:
+          type: string
+          format: date-time
+          nullable: true
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        deadline:
+          type: string
+          format: date-time
+          nullable: true
+        processing_date:
+          type: string
+          format: date-time
+          nullable: true
+        done_date:
+          type: string
+          format: date-time
+          nullable: true
+        approved_date:
+          type: string
+          format: date-time
+          nullable: true
+        rejected_date:
+          type: string
+          format: date-time
+          nullable: true
+        billed_date:
+          type: string
+          format: date-time
+          nullable: true
+        planned_hours:
+          type: number
+          nullable: true
+        prevent_overbooking:
+          type: boolean
+        history_modified:
+          type: string
+          format: date-time
+        project_id:
+          type: integer
+        project_task_id:
+          type: integer
+        notify_of_completion:
+          type: boolean
+          nullable: true
+        customer_contact_person_id:
+          type: integer
+          nullable: true
+        history_creator_username:
+          type: string
+        customer_reference:
+          type: string
+          nullable: true
+        external_ticket_number:
+          type: string
+          nullable: true
+        from_mail:
+          type: string
+          nullable: true
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        keywords:
+          type: array
+          items:
+            type: string
+
+    TicketsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    TicketDetailResponse:
+      type: object
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/Ticket'
+            - type: object
+              properties:
+                keywords:
+                  type: array
+                  items:
+                    type: string
+                categories:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      description:
+                        type: array
+                        items:
+                          type: string
+
+    TicketSubtask:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        ticket_id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        creator_username:
+          type: string
+        processor_username:
+          type: string
+          nullable: true
+        subject:
+          type: string
+        status:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        receipt_date:
+          type: string
+          format: date-time
+          nullable: true
+        start_date:
+          type: string
+          format: date
+          nullable: true
+        deadline:
+          type: string
+          format: date
+          nullable: true
+        processing_date:
+          type: string
+          format: date-time
+          nullable: true
+        done_date:
+          type: string
+          format: date-time
+          nullable: true
+        planned_hours:
+          type: number
+          nullable: true
+        prevent_overbooking:
+          type: integer
+        history_modified:
+          type: string
+          format: date-time
+        keywords:
+          type: array
+          items:
+            type: string
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        customer_contact_person_id:
+          type: integer
+          nullable: true
+        history_creator_username:
+          type: string
+
+    TicketSubtasksListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketSubtask'
+        links:
+          $ref: '#/components/schemas/PaginationLinks'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    TicketSubtaskResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/TicketSubtask'
+
+security:
+  - bearerAuth: [ ]

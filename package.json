@@ -1,7 +1,7 @@
 {
   "name": "@ssig-it/zep-mcp-server",
   "version": "0.1.0",
-  "description": "MCP server for the ZEP REST API (time tracking, projects, invoices)",
+  "description": "MCP server for ZEP HR & time-tracking (employees, attendances, absences, departments, devices)",
   "license": "MIT",
   "author": "SSIG-IT GmbH",
   "type": "module",
@@ -23,8 +23,10 @@
     "mcp",
     "model-context-protocol",
     "zep",
-    "zep-online",
+    "hr",
     "time-tracking",
+    "attendance",
+    "absence-management",
     "zeiterfassung"
   ],
   "homepage": "https://github.com/SSIG-IT/zep-mcp-server#readme",

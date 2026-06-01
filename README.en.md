@@ -1,88 +1,179 @@
-# ZEP MCP Server
+# ZEP MCP Server — HR & Time-Tracking
 
 <!-- mcp-name: io.github.SSIG-IT/zep-mcp-server -->
 
 > 🇩🇪 [Deutsche Version](./README.md)
 
-<!-- TODO: Short description (2–3 sentences). MCP server for the ZEP REST API
-     (time tracking, projects, invoices). Target API version: ZEP v7.8.74. -->
+MCP server for the [ZEP](https://www.zep.de) REST API (target v7.8.74), focused on **HR and
+time-tracking workflows**: employees, project times/attendances, absences, departments and terminals.
+Runs via `npx` in any MCP client (Claude Desktop, Claude Code, Cursor, VS Code, …) over stdio.
 
-> **TODO** — short description.
+## What this server does
+
+**24 tools (18 read + 6 write) + 4 resources**, focused on ZEP's HR/time-tracking modules:
+
+- **Employees** – list, details, employment periods, regular working times, transponders, create/update
+- **Attendances** (project times) – list, details, book
+- **Absences** – list, details, create (vacation/sick leave)
+- **Departments** – list, details, children, department employees
+- **Terminals** (devices) – list, details
+- **Master data** as resources – activities, categories, price groups, absence reasons
+
+## What this server does NOT do (yet)
+
+Deliberately **excluded**: the **Finance** (offers, invoices, articles, receipts), **Project
+management**, **Tickets**, **CRM/customers** and **master-data** (locations, folders, dynamic
+attributes) modules. These ~51 endpoints exist in the ZEP API but are gated by licence/module and are
+not enabled on the reference tenant (see [`schemas/zep-inventory.json`](./schemas/zep-inventory.json)).
+Need them? **Issues and PRs welcome.**
 
 ## Requirements
 
-<!-- TODO: ZEP "ZEP-Schnittstellen" module enabled · Bearer token · Node ≥ 20 -->
-
-> **TODO**
+- ZEP module **"ZEP-Schnittstellen"** enabled (this is where the API token is generated)
+- a **Bearer token** from that module
+- **Node.js ≥ 20**
 
 ## Installation & Configuration
 
-<!-- TODO: Per-host code blocks. command: "npx",
-     args: ["-y", "@ssig-it/zep-mcp-server"], env: { ZEP_API_TOKEN, ZEP_TENANT } -->
+No build needed — the server is launched via `npx`. `ZEP_TENANT` is the path segment of your ZEP
+login URL (`https://www.zep-online.de/<TENANT>/…`); in the example, `zepssigit`.
 
 ### Claude Desktop
 
-> **TODO**
+`claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "zep": {
+      "command": "npx",
+      "args": ["-y", "@ssig-it/zep-mcp-server"],
+      "env": { "ZEP_API_TOKEN": "your-bearer-token", "ZEP_TENANT": "zepssigit" }
+    }
+  }
+}
+```
 
 ### Cursor
 
-> **TODO**
+`~/.cursor/mcp.json` (or `.cursor/mcp.json` in the project):
+
+```json
+{
+  "mcpServers": {
+    "zep": {
+      "command": "npx",
+      "args": ["-y", "@ssig-it/zep-mcp-server"],
+      "env": { "ZEP_API_TOKEN": "your-bearer-token", "ZEP_TENANT": "zepssigit" }
+    }
+  }
+}
+```
 
 ### Claude Code
 
-> **TODO**
+```bash
+claude mcp add zep --env ZEP_API_TOKEN=your-bearer-token --env ZEP_TENANT=zepssigit -- npx -y @ssig-it/zep-mcp-server
+```
 
-## Tool Overview
+## Tool overview
 
-<!-- TODO: Link to the tool catalog + list of the most common tools -->
+### Read (18)
 
-> **TODO** — see [BLUEPRINT.md › 6. Tool-Katalog](./BLUEPRINT.md#6-tool-katalog).
+| Tool | Purpose |
+| --- | --- |
+| `zep_list_employees` | List employees (filter: personal_number) |
+| `zep_get_employee` | Employee details by `username` |
+| `zep_list_employee_absences` | An employee's absences |
+| `zep_list_employee_employment_periods` | Employment periods |
+| `zep_get_employee_employment_period` | Employment period detail |
+| `zep_list_employee_regular_working_times` | Regular working times |
+| `zep_get_employee_regular_working_time` | Regular working time detail |
+| `zep_list_employee_transponders` | An employee's transponders |
+| `zep_list_attendances` | Project times (filter: employee_id, start_date, end_date) |
+| `zep_get_attendance` | Project time detail |
+| `zep_list_absences` | Absences (filter: employee_id, start_date, end_date) |
+| `zep_get_absence` | Absence detail |
+| `zep_list_departments` | Departments |
+| `zep_get_department` | Department detail |
+| `zep_list_department_children` | Sub-departments |
+| `zep_list_department_employees` | A department's employees |
+| `zep_list_devices` | Terminals |
+| `zep_get_device` | Terminal detail |
 
-## Identifier Conventions
+### Write (6)
 
-> **Important:** `employees` are addressed by **`username`** (e.g. `max.mustermann`),
-> `customers` by **`customer_number`** (e.g. `K-12345`) — **not** by the numeric
-> internal ID. Wrong identifier type → 404 on the first attempt.
+| Tool | Purpose | Note |
+| --- | --- | --- |
+| `zep_create_employee` | Create employee | |
+| `zep_update_employee` | Update employee | `destructiveHint`, GET-merge-PUT |
+| `zep_create_employment_period` | Create employment period | |
+| `zep_update_employment_period` | Update employment period | `destructiveHint`, GET-merge-PUT |
+| `zep_create_attendance` | Book a project time | requires the project-management module (project_id/task_id/activity_id) |
+| `zep_create_absence` | Create an absence | cannot be changed/deleted via API afterwards |
+
+### Resources (4)
+
+`zep://master-data/activities`, `zep://master-data/categories`, `zep://master-data/price-groups`,
+`zep://master-data/absence-reasons` (MIME `application/json`).
+
+## Identifier conventions ⚠️
+
+> **Employees are addressed by `username`** (string, e.g. `max.mustermann`) — **NOT** by numeric ID.
+> Wrong identifier type → 404 on the first attempt.
 >
-> <!-- TODO: detailed note block -->
+> All other resources (absences, departments, terminals, employment periods, regular working times)
+> use **numeric IDs**.
 
-## Resources
+## Environment variables
 
-<!-- TODO: URI scheme zep://master-data/{type} (activities, categories,
-     price-groups, absence-reasons) -->
-
-> **TODO**
-
-## Environment Variables
-
-<!-- TODO: table of all env vars (see .env.example) -->
-
-> **TODO**
+| Variable | Required | Default | Meaning |
+| --- | --- | --- | --- |
+| `ZEP_API_TOKEN` | yes | — | Bearer token from "ZEP-Schnittstellen". Never logged. |
+| `ZEP_TENANT` | yes | — | Tenant = path segment of the login URL, e.g. `zepssigit`. |
+| `ZEP_BASE_URL` | no | `https://www.zep-online.de/${ZEP_TENANT}/next/api/v1` | Override (sandbox/self-hosting). |
+| `ZEP_REQUEST_TIMEOUT_MS` | no | `30000` | HTTP timeout per request. |
+| `ZEP_MAX_RETRIES` | no | `3` | Retries on 5xx/429. |
+| `ZEP_CONCURRENCY_LIMIT` | no | `5` | Max parallel requests (temporarily 1 on 429). |
+| `LOG_LEVEL` | no | `info` | `trace`/`debug`/`info`/`warn`/`error` (to stderr). |
+| `AUDIT_LOG_PATH` | no | stderr | File path for the audit log (PUT/PATCH/DELETE). |
 
 ## Examples
 
-<!-- TODO: 4–5 typical prompts (book hours, create project, filter tickets,
-     fetch invoices, search customers) -->
-
-> **TODO**
+- "Show my attendance/project times this week."
+- "When did **max.mustermann** book vacation?"
+- "Book me 8 hours for yesterday on project X." *(requires the project-management module)*
+- "Which employees are off today?"
+- "List all departments with their employee count."
 
 ## Security
 
-<!-- TODO: token handling, rate limits, destructive tools, confirm pattern -->
-
-> **TODO**
+- Token only from the env, never in schemas/outputs/logs (app logger redacts `authorization`/`token`).
+- Write tools are annotated `destructiveHint`/non-destructive; updates use GET-merge-PUT.
+- **Audit log** for every PUT/PATCH/DELETE (tool, resource_id, verb, changed field *names* — never values)
+  on stderr (`stream: "audit"`) or a file (`AUDIT_LOG_PATH`).
+- HTTPS-only, 30 s timeout, rate-limit respect (429 → 60 s backoff, concurrency 1).
 
 ## Troubleshooting
 
-<!-- TODO: 401, 404 (wrong identifier type!), 429, audit-log location -->
+- **401** – token missing/expired, or the "ZEP-Schnittstellen" module is not active.
+- **404 on the first try** – usually the wrong identifier type: `employees` need the `username`, not the
+  numeric ID. Also: wrong `ZEP_TENANT` (HTML "Page not found 404").
+- **"This endpoint is not enabled for your ZEP module/licence"** – module gate: the feature (e.g.
+  internal-rates, or the master-data resources) is not enabled for your tenant.
+- The **audit log** goes to stderr (marker `stream: "audit"`) or `AUDIT_LOG_PATH`.
 
-> **TODO**
+## Roadmap
+
+More ZEP modules (finance, projects, tickets, CRM, master data) are possible once someone needs them
+and submits PRs. The 51 not-yet-implemented endpoints are documented in
+[`schemas/zep-inventory.json`](./schemas/zep-inventory.json).
 
 ## Contributing
 
-<!-- TODO: BLUEPRINT.md, `npm run sync-spec`, changeset workflow -->
-
-> **TODO**
+Architecture details in [`BLUEPRINT.md`](./BLUEPRINT.md). Schema source:
+[`schemas/zep-openapi-v7.4.0.yaml`](./schemas/zep-openapi-v7.4.0.yaml) (partial coverage; HR bodies are
+maintained in `src/schemas/manual.ts`). Please send PRs with tests (`npm test`) and a changeset.
 
 ## License
 
