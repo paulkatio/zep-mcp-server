@@ -138,3 +138,26 @@ describe('zep_update_employee (GET-merge-PUT)', () => {
     expect(UpdateEmployeeInput.safeParse({ username: 'x' }).success).toBe(true);
   });
 });
+
+describe('dual content blocks (structuredContent + JSON text)', () => {
+  it('ok results carry [summary, compact JSON of the full payload]', async () => {
+    const body = fixture('employee_detail');
+    mockReq.mockResolvedValueOnce(body);
+    const res = await call('zep_get_employee', { username: 'max.mustermann' });
+    expect(res.content).toHaveLength(2);
+    expect(res.content[0].text).toContain('max.mustermann'); // summary
+    expect(JSON.parse(res.content[1].text)).toEqual(body); // full JSON
+  });
+
+  it('truncates a >50-item list in the text block but keeps structuredContent full', async () => {
+    const items = Array.from({ length: 73 }, (_, i) => ({ id: i }));
+    mockReq.mockResolvedValueOnce({ data: items, meta: { last_page: 1 } });
+    const res = await call('zep_list_employees', { limit: 100 });
+    expect(res.content).toHaveLength(2);
+    const firstLine = res.content[1].text.split('\n')[0];
+    const parsed = JSON.parse(firstLine) as { data: unknown[] };
+    expect(parsed.data).toHaveLength(50);
+    expect(res.content[1].text).toMatch(/\+23 more/);
+    expect((res.structuredContent as { data: unknown[] }).data).toHaveLength(73);
+  });
+});
