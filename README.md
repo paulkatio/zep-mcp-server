@@ -21,7 +21,7 @@ Claude Code, Cursor, VS Code u.a.) oder self-hosted über eine MetaMCP-Instanz w
 Die ZEP-REST-API deckt das ganze Produkt ab (≈85 Endpunkte). Im Alltag mit einem LLM braucht
 man aber selten alles — sondern fokussierte, sichere Werkzeuge für **HR und Zeiterfassung**:
 Anwesenheit prüfen, Urlaub nachsehen, Mitarbeiter finden, Abteilungen auswerten. Genau das
-liefert dieser Server: 24 kuratierte Tools mit klaren When/How/What-Beschreibungen,
+liefert dieser Server: 28 kuratierte Tools mit klaren When/How/What-Beschreibungen,
 Identifier-Sicherheit (Username vs. numerische ID), Audit-Log für Schreibzugriffe und sauberem
 Module-Gate-Verhalten für nicht lizenzierte Bereiche.
 
@@ -44,13 +44,14 @@ Module-Gate-Verhalten für nicht lizenzierte Bereiche.
 
 ## Was dieser Server kann
 
-**24 Tools (18 lesend + 6 schreibend) + 4 Resources**, fokussiert auf die HR-/Time-Tracking-Module von ZEP:
+**28 Tools (22 lesend + 6 schreibend) + 4 Resources**, fokussiert auf die HR-/Time-Tracking-Module von ZEP:
 
 - **Mitarbeiter** – auflisten, Details, Beschäftigungszeiträume, Regelarbeitszeiten, Transponder, anlegen/ändern
 - **Projektzeiten** (Attendances) – auflisten, Details, buchen
 - **Abwesenheiten** – auflisten, Details, eintragen (Urlaub/Krankheit)
 - **Abteilungen** – auflisten, Details, Unterabteilungen, Abteilungsmitarbeiter
 - **Terminals** (Geräte) – auflisten, Details
+- **Auswertungen** (aggregiert, read-only) – Team-Status heute, Projektzeiten-Summe, Urlaubskonto, offene Anträge
 - **Stammdaten** als Resources – Tätigkeiten, Kategorien, Preisgruppen, Fehlgründe
 
 ## Was dieser Server (noch) NICHT kann
@@ -181,6 +182,18 @@ Updates (lokaler Clone): `git pull && npm ci && npm run build`, dann den Server 
 | `zep_create_attendance` | Projektzeit buchen | erfordert Projektverwaltungs-Modul (project_id/task_id/activity_id) |
 | `zep_create_absence` | Abwesenheit eintragen | per API nicht mehr änderbar/löschbar |
 
+### Aggregate / Auswertungen (4, read-only)
+
+Synthetische Tools — kombinieren die obigen GETs client-seitig und besitzen **keinen eigenen
+Endpunkt**. Setzen ein `truncated`-Flag, wenn das 500er-Scan-Limit erreicht wird.
+
+| Tool | Zweck |
+| --- | --- |
+| `zep_get_team_status_today` | Wer ist heute da/abwesend? Roster → present / absent / no_record (optional department_id) |
+| `zep_get_employee_attendance_summary` | Projektzeiten-Stunden je Tag über einen Zeitraum (username, start_date, end_date) |
+| `zep_get_employee_vacation_balance` | Urlaubskonto: Anspruch vs. genommen/beantragt (username, year); zählt je Antrag einmal |
+| `zep_list_pending_absences` | Nicht genehmigte Abwesenheiten (approved !== true; optional employee_id/Datumsfilter) |
+
 ### Resources (4)
 
 `zep://master-data/activities`, `zep://master-data/categories`, `zep://master-data/price-groups`,
@@ -212,7 +225,10 @@ Updates (lokaler Clone): `git pull && npm ci && npm run build`, dann den Server 
 - „Zeig mir meine Anwesenheit/Projektzeiten diese Woche."
 - „Wann hat **max.mustermann** Urlaub eingetragen?"
 - „Buch mir 8 Stunden für gestern auf Projekt X." *(braucht das Projektverwaltungs-Modul)*
-- „Welche Mitarbeiter sind heute nicht da?"
+- „Welche Mitarbeiter sind heute nicht da?" *(→ `zep_get_team_status_today`)*
+- „Wie viel Urlaub hat **max.mustermann** dieses Jahr noch?" *(→ `zep_get_employee_vacation_balance`)*
+- „Wie viele Stunden hat **jane.roe** im Mai erfasst?" *(→ `zep_get_employee_attendance_summary`)*
+- „Welche Abwesenheitsanträge sind noch offen?" *(→ `zep_list_pending_absences`)*
 - „Liste alle Abteilungen mit ihrer Mitarbeiterzahl."
 
 ## Sicherheit
@@ -234,11 +250,13 @@ Updates (lokaler Clone): `git pull && npm ci && npm run build`, dann den Server 
 
 ## Getestet mit
 
-Verifiziert gegen **ZEP v7.8.74** mit dem `zepssigit`-Tenant: alle 18 Lese-Tools liefern echtes
-JSON (Discovery + Shape-Validierung in [`schemas/zep-inventory.json`](./schemas/zep-inventory.json)
-und [`inventory.md`](./inventory.md)). Body-Schemas stammen aus der ZEP-OpenAPI-v7.4.0-Spec und der
-Live-Doku. Unit-Tests mocken HTTP (undici MockAgent); Live-Integration-Tests laufen nur mit
-`ZEP_TEST_TOKEN` und nie in CI.
+Verifiziert gegen **ZEP v7.8.74** mit dem `zepssigit`-Tenant: alle 18 direkten Lese-Tools und die
+4 aggregierten Auswertungs-Tools liefern echtes JSON (Discovery + Shape-Validierung in
+[`schemas/zep-inventory.json`](./schemas/zep-inventory.json) und [`inventory.md`](./inventory.md);
+Write-Endpoint-Probe in [`schemas/zep-inventory-write-ops.json`](./schemas/zep-inventory-write-ops.json) —
+der Mandant bietet **keine** Update-/Delete-/Approve-Endpunkte). Body-Schemas stammen aus der
+ZEP-OpenAPI-v7.4.0-Spec und der Live-Doku. Unit-Tests mocken HTTP (undici MockAgent);
+Live-Integration-Tests laufen nur mit `ZEP_TEST_TOKEN` und nie in CI.
 
 <!-- screenshot:tba — Beispiel-Conversation mit Claude Desktop -->
 

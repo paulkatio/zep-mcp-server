@@ -88,6 +88,50 @@ live('ZEP live API (read-only GETs)', () => {
     },
     REQUEST_TIMEOUT_MS + 5_000,
   );
+
+  // Endpoints behind the aggregate (insight) tools: employment-periods (vacation balance)
+  // and the employee_id-filtered absences list (vacation balance + pending absences).
+  it(
+    'aggregate-tool dependencies return data (employment-periods + filtered absences)',
+    async () => {
+      const list = await liveGet('/employees?limit=1');
+      const username = (list.body as { data?: { username?: string }[] }).data?.[0]?.username;
+      expect(username, 'need at least one employee').toBeTruthy();
+
+      const periods = await liveGet(`/employees/${encodeURIComponent(username!)}/employment-periods`);
+      expect(periods.status).toBe(200);
+      expect(hasData(periods.body)).toBe(true);
+
+      const absences = await liveGet(`/absences?employee_id=${encodeURIComponent(username!)}&limit=1`);
+      expect(absences.status).toBe(200);
+      expect(hasData(absences.body)).toBe(true);
+    },
+    REQUEST_TIMEOUT_MS * 2 + 5_000,
+  );
+});
+
+// ── No-write guard (read-only, gated) ────────────────────────────────────────
+// Documents the Phase 8.2.1 finding as a live regression guard: the reference
+// tenant exposes NO update/delete endpoint for attendances/absences. Probes a
+// non-existent id (999999) so nothing real is ever touched, and asserts the verb
+// is rejected (404/405) — never silently accepted (2xx).
+live('ZEP live API (no write endpoints — guard)', () => {
+  const NOWRITE = [
+    { method: 'PATCH', path: '/attendances/999999' },
+    { method: 'DELETE', path: '/attendances/999999' },
+    { method: 'PATCH', path: '/absences/999999' },
+    { method: 'DELETE', path: '/absences/999999' },
+  ] as const;
+
+  it.each(NOWRITE)('$method $path is not a 2xx (route is read-only)', async ({ method, path }) => {
+    const res = await fetch(`${BASE_URL}${path}`, {
+      method,
+      headers: { Authorization: `Bearer ${TOKEN ?? ''}`, Accept: 'application/json' },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+    expect(res.status, `${method} ${path} must not silently succeed`).not.toBeLessThan(400);
+    expect([404, 405]).toContain(res.status);
+  });
 });
 
 // ── Idempotent write cycle (DOUBLE-GATED) ────────────────────────────────────
@@ -97,16 +141,23 @@ live('ZEP live API (read-only GETs)', () => {
 // ZEP_TEST_TASK_ID, ZEP_TEST_ACTIVITY_ID. It books a tiny 5-minute entry for
 // TODAY (never a future date) and verifies it. Attendances have no DELETE
 // endpoint → the created entry must be removed manually in the ZEP UI (id logged).
+// Extra hard safety gate: even with all project vars set, the write cycle stays OFF
+// unless ZEP_TEST_ALLOW_WRITES=true is explicitly exported. (No write endpoint exists
+// on the reference tenant anyway — see schemas/zep-inventory-write-ops.json — so this
+// only ever runs against a tenant that has the Projektverwaltung module enabled.)
+const ALLOW_WRITES = process.env.ZEP_TEST_ALLOW_WRITES === 'true';
 const WRITE_USERNAME = process.env.ZEP_TEST_USERNAME;
 const WRITE_PROJECT_ID = process.env.ZEP_TEST_PROJECT_ID;
 const WRITE_TASK_ID = process.env.ZEP_TEST_TASK_ID;
 const WRITE_ACTIVITY_ID = process.env.ZEP_TEST_ACTIVITY_ID;
-const writeReady = Boolean(TOKEN && WRITE_USERNAME && WRITE_PROJECT_ID && WRITE_TASK_ID && WRITE_ACTIVITY_ID);
+const writeReady = Boolean(
+  TOKEN && ALLOW_WRITES && WRITE_USERNAME && WRITE_PROJECT_ID && WRITE_TASK_ID && WRITE_ACTIVITY_ID,
+);
 
 if (TOKEN && !writeReady) {
   console.warn(
-    '[live.test] Skipping the create cycle: POST /attendances needs the Projektverwaltung module. ' +
-      'Set ZEP_TEST_USERNAME, ZEP_TEST_PROJECT_ID, ZEP_TEST_TASK_ID and ZEP_TEST_ACTIVITY_ID to enable it.',
+    '[live.test] Skipping the create cycle: it is double-gated. Needs ZEP_TEST_ALLOW_WRITES=true AND ' +
+      'the Projektverwaltung vars (ZEP_TEST_USERNAME, ZEP_TEST_PROJECT_ID, ZEP_TEST_TASK_ID, ZEP_TEST_ACTIVITY_ID).',
   );
 }
 

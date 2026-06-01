@@ -22,7 +22,7 @@ The ZEP REST API covers the whole product (~85 endpoints). Day to day with an LL
 need all of it — you need focused, safe tools for **HR and time-tracking**: check attendance,
 look up vacation, find an employee, report on departments. That's what this server provides:
 24 curated tools with clear When/How/What descriptions, identifier safety (username vs. numeric
-id), an audit log for writes, and clean module-gate behaviour for unlicensed areas.
+id), an audit log for writes, and clean module-gate behaviour for unlicensed areas. (28 tools total.)
 
 ## Contents
 
@@ -43,13 +43,14 @@ id), an audit log for writes, and clean module-gate behaviour for unlicensed are
 
 ## What this server does
 
-**24 tools (18 read + 6 write) + 4 resources**, focused on ZEP's HR/time-tracking modules:
+**28 tools (22 read + 6 write) + 4 resources**, focused on ZEP's HR/time-tracking modules:
 
 - **Employees** – list, details, employment periods, regular working times, transponders, create/update
 - **Attendances** (project times) – list, details, book
 - **Absences** – list, details, create (vacation/sick leave)
 - **Departments** – list, details, children, department employees
 - **Terminals** (devices) – list, details
+- **Insights** (aggregated, read-only) – team status today, attendance summary, vacation balance, pending requests
 - **Master data** as resources – activities, categories, price groups, absence reasons
 
 ## What this server does NOT do (yet)
@@ -180,6 +181,18 @@ Updates (local clone): `git pull && npm ci && npm run build`, then restart the s
 | `zep_create_attendance` | Book a project time | requires the project-management module (project_id/task_id/activity_id) |
 | `zep_create_absence` | Create an absence | cannot be changed/deleted via API afterwards |
 
+### Aggregate / insights (4, read-only)
+
+Synthetic tools — they compose the GETs above client-side and own **no endpoint**. They set a
+`truncated` flag when the 500-item scan cap is reached.
+
+| Tool | Purpose |
+| --- | --- |
+| `zep_get_team_status_today` | Who is in/out today? Roster → present / absent / no_record (optional department_id) |
+| `zep_get_employee_attendance_summary` | Project-time hours per day over a range (username, start_date, end_date) |
+| `zep_get_employee_vacation_balance` | Vacation balance: entitlement vs. taken/pending (username, year); counts each leave once |
+| `zep_list_pending_absences` | Not-yet-approved absences (approved !== true; optional employee_id/date filter) |
+
 ### Resources (4)
 
 `zep://master-data/activities`, `zep://master-data/categories`, `zep://master-data/price-groups`,
@@ -211,7 +224,10 @@ Updates (local clone): `git pull && npm ci && npm run build`, then restart the s
 - "Show my attendance/project times this week."
 - "When did **max.mustermann** book vacation?"
 - "Book me 8 hours for yesterday on project X." *(requires the project-management module)*
-- "Which employees are off today?"
+- "Which employees are off today?" *(→ `zep_get_team_status_today`)*
+- "How much vacation does **max.mustermann** have left this year?" *(→ `zep_get_employee_vacation_balance`)*
+- "How many hours did **jane.roe** log in May?" *(→ `zep_get_employee_attendance_summary`)*
+- "Which absence requests are still pending?" *(→ `zep_list_pending_absences`)*
 - "List all departments with their employee count."
 
 ## Security
@@ -233,11 +249,13 @@ Updates (local clone): `git pull && npm ci && npm run build`, then restart the s
 
 ## Tested with
 
-Verified against **ZEP v7.8.74** on the `zepssigit` tenant: all 18 read tools return real JSON
-(discovery + shape validation in [`schemas/zep-inventory.json`](./schemas/zep-inventory.json) and
-[`inventory.md`](./inventory.md)). Body schemas come from the ZEP OpenAPI v7.4.0 spec and the live
-docs. Unit tests mock HTTP (undici MockAgent); live integration tests only run with `ZEP_TEST_TOKEN`
-and never in CI.
+Verified against **ZEP v7.8.74** on the `zepssigit` tenant: all 18 direct read tools and the 4
+aggregate insight tools return real JSON (discovery + shape validation in
+[`schemas/zep-inventory.json`](./schemas/zep-inventory.json) and [`inventory.md`](./inventory.md);
+write-endpoint probe in [`schemas/zep-inventory-write-ops.json`](./schemas/zep-inventory-write-ops.json) —
+the tenant exposes **no** update/delete/approve endpoints). Body schemas come from the ZEP OpenAPI
+v7.4.0 spec and the live docs. Unit tests mock HTTP (undici MockAgent); live integration tests only
+run with `ZEP_TEST_TOKEN` and never in CI.
 
 <!-- screenshot:tba — example conversation with Claude Desktop -->
 
