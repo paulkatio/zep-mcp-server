@@ -81,13 +81,13 @@ describe('input validation (strict)', () => {
 });
 
 describe('zep_list_absences', () => {
-  it('forwards limit/page/filters as query', async () => {
+  it('no date filter → forwards limit/page/filters as query (passthrough)', async () => {
     mockReq.mockResolvedValueOnce(fixture('absences_list'));
-    await call('zep_list_absences', { limit: 3, page: 1, employee_id: 'user4', start_date: '2023-08-01' });
+    await call('zep_list_absences', { limit: 3, page: 1, employee_id: 'user4' });
     expect(mockReq).toHaveBeenCalledWith({
       method: 'GET',
       path: '/absences',
-      query: { limit: 3, page: 1, employee_id: 'user4', start_date: '2023-08-01' },
+      query: { limit: 3, page: 1, employee_id: 'user4' },
     });
   });
 
@@ -95,6 +95,32 @@ describe('zep_list_absences', () => {
     mockReq.mockResolvedValueOnce({ data: [{ id: 1 }, { id: 2 }], meta: { last_page: 1 } });
     const res = await call('zep_list_absences', { auto_paginate: true, max_items: 50 });
     expect(res.structuredContent).toMatchObject({ count: 2 });
+  });
+
+  // Regression: ZEP filters absences by START date only, so a query on a single
+  // day used to miss a multi-day absence that began earlier. The tool now widens
+  // the ZEP query and keeps only rows that truly overlap the window.
+  it('date filter → widens the ZEP query and keeps only overlapping rows', async () => {
+    mockReq.mockResolvedValueOnce({
+      data: [
+        // 5-day vacation that STARTED before the queried day but covers it
+        { id: 726, employee_id: 'v', start_date: '2026-06-22T00:00:00Z', end_date: '2026-06-26T00:00:00Z' },
+        // unrelated row that does not overlap 2026-06-23 → must be dropped
+        { id: 999, employee_id: 'v', start_date: '2026-01-01T00:00:00Z', end_date: '2026-01-02T00:00:00Z' },
+      ],
+      meta: { last_page: 1 },
+    });
+    const res = await call('zep_list_absences', { employee_id: 'v', start_date: '2026-06-23', end_date: '2026-06-23' });
+
+    // both bounds widened by the slack (ZEP requires full containment)
+    const q = (mockReq.mock.calls[0][0] as { query: Record<string, unknown> }).query;
+    expect(q.employee_id).toBe('v');
+    expect(q.start_date).toBe('2025-06-22'); // 2026-06-23 − 366 days
+    expect(q.end_date).toBe('2027-06-24'); // 2026-06-23 + 366 days
+
+    const sc = res.structuredContent as { count: number; data: { id: number }[] };
+    expect(sc.data.map((d) => d.id)).toEqual([726]);
+    expect(sc.count).toBe(1);
   });
 });
 

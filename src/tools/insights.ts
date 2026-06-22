@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { paginateAll } from '../client/pagination.js';
+import { fetchAbsencesOverlapping } from '../lib/absenceWindow.js';
 import { toolOk, toolError, type ToolResult } from '../lib/toolResult.js';
 import { DATE_REGEX } from '../schemas/common.js';
 import { EmployeeUsername, DepartmentId } from '../schemas/identifiers.js';
@@ -113,11 +114,14 @@ export function registerInsightTools(server: McpServer): void {
       const departmentId = input.department_id as number | undefined;
       try {
         const rosterPath = departmentId ? `/departments/${departmentId}/employees` : '/employees';
-        const [roster, attendances, absences] = await Promise.all([
+        // Absences: fetch by overlap (ZEP filters by start date only, so a narrow
+        // [date, date] query would miss multi-day absences that began earlier).
+        const [roster, attendances, absenceWin] = await Promise.all([
           paginateAll<Employee>({ path: rosterPath, maxItems: CAP }),
           paginateAll<Attendance>({ path: '/attendances', query: { start_date: date, end_date: date }, maxItems: CAP }),
-          paginateAll<Absence>({ path: '/absences', query: { start_date: date, end_date: date }, maxItems: CAP }),
+          fetchAbsencesOverlapping<Absence>({ from: date, to: date, maxItems: CAP }),
         ]);
+        const absences = absenceWin.items;
 
         const inRoster = new Set(roster.map((e) => e.username));
         const presentSet = new Set(
@@ -143,7 +147,7 @@ export function registerInsightTools(server: McpServer): void {
           present_count: present.length,
           absent_count: absent.length,
           no_record_count: noRecord.length,
-          truncated: roster.length >= CAP || attendances.length >= CAP || absences.length >= CAP,
+          truncated: roster.length >= CAP || attendances.length >= CAP || absenceWin.truncated,
           present,
           absent,
           no_record: noRecord,
@@ -233,10 +237,13 @@ export function registerInsightTools(server: McpServer): void {
       const yearStart = `${year}-01-01`;
       const yearEnd = `${year}-12-31`;
       try {
-        const [periods, absences] = await Promise.all([
+        const [periods, absenceWin] = await Promise.all([
           paginateAll<EmploymentPeriod>({ path: `/employees/${u(username)}/employment-periods`, maxItems: CAP }),
-          paginateAll<Absence>({ path: '/absences', query: { employee_id: username, start_date: yearStart, end_date: yearEnd }, maxItems: CAP }),
+          // Overlap fetch: ZEP filters by containment, so a plain [yearStart, yearEnd]
+          // query would drop a leave that straddles the year boundary entirely.
+          fetchAbsencesOverlapping<Absence>({ employee_id: username, from: yearStart, to: yearEnd, maxItems: CAP }),
         ]);
+        const absences = absenceWin.items;
         // Period overlapping the year: starts on/before year-end AND (open-ended OR ends on/after year-start).
         const covering = periods.find(
           (p) => dayOf(p.start_date) <= yearEnd && (p.end_date == null || dayOf(p.end_date) >= yearStart),
@@ -293,8 +300,9 @@ export function registerInsightTools(server: McpServer): void {
             'taken/pending zählen number_of_days je Antrag genau einmal (mehrtägiger Urlaub kann als ' +
             'mehrere Zeilen mit gemeinsamem Antrag erscheinen); days=0 = bereits über eine andere Zeile ' +
             'desselben Antrags gezählt. Zeilen ohne Antrag: inkl. Kalendertage-Spanne. remaining ohne ' +
-            'Übertrag aus Vorjahr — negativ ist möglich.',
-          truncated: absences.length >= CAP,
+            'Übertrag aus Vorjahr — negativ ist möglich. Jahresübergreifender Urlaub wird mit seinen ' +
+            'vollen Antragstagen jedem berührten Jahr zugerechnet.',
+          truncated: absenceWin.truncated,
           absences: detail,
         };
         return toolOk(
@@ -316,8 +324,9 @@ export function registerInsightTools(server: McpServer): void {
       description:
         'Nutze dies für "welche Urlaubs-/Abwesenheitsanträge sind offen?". Lädt (read-only) Abwesenheiten und ' +
         'filtert client-seitig auf nicht genehmigte (approved !== true). Optionale Filter: employee_id (Username), ' +
-        'start_date/end_date (YYYY-MM-DD). Returns: { count, data[{id, employee_id, absence_reason_id, reason, ' +
-        'start_date, end_date, approved, status}] }.',
+        'start_date/end_date (YYYY-MM-DD) — findet alle Abwesenheiten, die sich mit dem Zeitraum ÜBERSCHNEIDEN ' +
+        '(auch mehrtägige, die vor dem Zeitraum beginnen). Returns: { count, data[{id, employee_id, ' +
+        'absence_reason_id, reason, start_date, end_date, approved, status}] }.',
       inputSchema: PendingAbsencesInput.shape,
       annotations: READ_ONLY,
     },
@@ -328,12 +337,13 @@ export function registerInsightTools(server: McpServer): void {
         end_date?: string;
       };
       try {
-        const absences = await paginateAll<Absence>({
-          path: '/absences',
-          query: { employee_id, start_date, end_date },
+        const { items, scanned, truncated } = await fetchAbsencesOverlapping<Absence>({
+          employee_id,
+          from: start_date,
+          to: end_date,
           maxItems: CAP,
         });
-        const data = absences
+        const data = items
           .filter((a) => a.approved !== true)
           .map((a) => ({
             id: a.id,
@@ -345,9 +355,8 @@ export function registerInsightTools(server: McpServer): void {
             approved: a.approved ?? false,
             status: a.leaveApprovalApplication?.status?.name ?? null,
           }));
-        const truncated = absences.length >= CAP;
         return toolOk(
-          { count: data.length, scanned: absences.length, truncated, data },
+          { count: data.length, scanned, truncated, data },
           `${data.length} offene/nicht genehmigte Abwesenheit(en).` +
             (truncated ? ' Achtung: 500er Scan-Limit erreicht — mit Datumsfilter (start_date/end_date) eingrenzen.' : ''),
         );

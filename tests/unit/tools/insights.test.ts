@@ -217,6 +217,21 @@ describe('zep_list_pending_absences', () => {
     const firstCall = mockReq.mock.calls[0][0] as { query: Record<string, unknown> };
     expect(firstCall.query).toMatchObject({ employee_id: 'jane.roe' });
   });
+
+  // Regression: a date window must keep multi-day pending absences that began
+  // before the window but overlap it, and drop non-overlapping ones.
+  it('date window keeps multi-day pending absences that began earlier (overlap)', async () => {
+    routeByPath({
+      '/absences': [
+        { id: 726, employee_id: 'v', absence_reason_id: 'UB', approved: false, start_date: '2026-06-22T00:00:00Z', end_date: '2026-06-26T00:00:00Z' },
+        { id: 999, employee_id: 'v', absence_reason_id: 'UB', approved: false, start_date: '2026-01-01T00:00:00Z', end_date: '2026-01-02T00:00:00Z' },
+      ],
+    });
+    const res = await call('zep_list_pending_absences', { start_date: '2026-06-23', end_date: '2026-06-23' });
+    const sc = res.structuredContent as { count: number; data: { id: number }[] };
+    expect(sc.data.map((d) => d.id)).toEqual([726]); // 999 dropped by overlap filter
+    expect(sc.count).toBe(1);
+  });
 });
 
 describe('input validation (strict)', () => {

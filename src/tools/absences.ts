@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { zepRequest } from '../client/http.js';
 import { runList, runGet } from '../lib/toolHelpers.js';
+import { fetchAbsencesOverlapping } from '../lib/absenceWindow.js';
 import { toolOk, toolError } from '../lib/toolResult.js';
 import { PaginationInput, AutoPaginateInput, DATE_REGEX } from '../schemas/common.js';
 import { AbsenceId } from '../schemas/identifiers.js';
@@ -31,12 +32,40 @@ export function registerAbsenceTools(server: McpServer): void {
       description:
         'Nutze dies, um Abwesenheiten aller Mitarbeiter zu sehen (z.B. "wer ist heute nicht da?"). ' +
         'Optionale Filter: employee_id (Username, String), start_date/end_date (YYYY-MM-DD). ' +
-        'Paginiert mit limit/page; auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
+        'Mit start_date/end_date werden alle Abwesenheiten gefunden, die sich mit dem Zeitraum ÜBERSCHNEIDEN — ' +
+        'auch mehrtägige, die VOR dem Zeitraum beginnen (z.B. eine Urlaubswoche bei Abfrage eines einzelnen Tages). ' +
+        'Ohne Datumsfilter paginiert mit limit/page; auto_paginate=true lädt alle Seiten (Hard-Cap 500). ' +
         'Returns: Array mit id, employee_id, absence_reason_id, start_date, end_date, approved.',
       inputSchema: ListAbsencesInput.shape,
       annotations: READ_ONLY,
     },
-    async (input) => runList({ tool: 'zep_list_absences', path: '/absences', input, noun: 'Abwesenheiten' }),
+    async (input) => {
+      const { start_date, end_date, employee_id, max_items } = input as {
+        start_date?: string;
+        end_date?: string;
+        employee_id?: string;
+        max_items?: number;
+      };
+      // Date-filtered: use overlap-aware fetch (ZEP filters by start date only).
+      if (start_date !== undefined || end_date !== undefined) {
+        try {
+          const { items, scanned, truncated } = await fetchAbsencesOverlapping({
+            employee_id,
+            from: start_date,
+            to: end_date,
+            maxItems: max_items,
+          });
+          return toolOk(
+            { data: items, count: items.length, scanned, truncated },
+            `${items.length} Abwesenheit(en) im Zeitraum (Überschneidung).` +
+              (truncated ? ' Achtung: 500er Scan-Limit erreicht — Zeitraum enger fassen.' : ''),
+          );
+        } catch (err) {
+          return toolError(err, 'zep_list_absences', { employee_id, start_date, end_date });
+        }
+      }
+      return runList({ tool: 'zep_list_absences', path: '/absences', input, noun: 'Abwesenheiten' });
+    },
   );
 
   server.registerTool(
